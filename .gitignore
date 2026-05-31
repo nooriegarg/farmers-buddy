@@ -1,0 +1,24 @@
+# Node Modules
+frontend/node_modules
+
+# React Build
+frontend/dist
+
+# Vite
+frontend/.vite
+
+# Java Build
+backend/target
+
+# IntelliJ
+.idea
+*.iml
+
+# Mac Files
+.DS_Store
+
+# Logs
+*.log
+
+# Environment Files
+.env
