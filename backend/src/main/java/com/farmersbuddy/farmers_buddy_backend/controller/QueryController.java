@@ -8,47 +8,96 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// =============================================================
+// QueryController.java — REST Controller for Query Management APIs
+// =============================================================
+// Exposes HTTP endpoints for creating, retrieving, and replying to queries.
+// Delegates business logic to QueryService.
+//
+// Base URL: /api/queries
+//
+// Endpoints:
+//   POST   /api/queries                    → farmer creates a new query
+//   GET    /api/queries                    → officer fetches all queries
+//   GET    /api/queries/farmer/{farmerId}  → farmer fetches their own queries
+//   PUT    /api/queries/{id}/reply         → officer submits a reply
+//
+// Query Lifecycle (handled in replyToQuery):
+//   1. Fetch the existing query by ID
+//   2. Set the officerReply text from the request body
+//   3. Update status to "RESOLVED"
+//   4. Save and return the updated query
+//
+// Viva Tip:
+//   @PathVariable extracts the ID from the URL path (e.g., /queries/5/reply → id=5)
+//   @RequestBody deserializes the incoming JSON into a Query object
+// =============================================================
+
 @RestController
 @RequestMapping("/api/queries")
 @CrossOrigin("*")
 public class QueryController {
 
+    // Injected by Spring — handles query CRUD and reply business logic
     @Autowired
     private QueryService queryService;
 
+    // -------------------------
+    // POST /api/queries
+    // -------------------------
+    // Farmer submits a new agriculture query.
+    // QueryService sets the status to "PENDING" automatically.
     @PostMapping
     public Query createQuery(@RequestBody Query query) {
         return queryService.createQuery(query);
     }
 
+    // -------------------------
+    // GET /api/queries
+    // -------------------------
+    // Returns all queries from all farmers — used by the Officer Dashboard.
     @GetMapping
     public List<Query> getAllQueries() {
         return queryService.getAllQueries();
     }
 
-    @GetMapping("/farmer/{farmerName}")
+    // -------------------------
+    // GET /api/queries/farmer/{farmerId}
+    // -------------------------
+    // Returns queries belonging to a specific farmer, identified by farmerId.
+    // Used by the Farmer Dashboard to load the logged-in farmer's queries only.
+    @GetMapping("/farmer/{farmerId}")
     public List<Query> getQueriesByFarmer(
-            @PathVariable String farmerName
-    ) {
+                @PathVariable Long farmerId
+        ) {
 
-        return queryService.getQueriesByFarmerName(farmerName);
-    }
+            return queryService.getQueriesByFarmerId(farmerId);
+        }
 
+    // -------------------------
+    // PUT /api/queries/{id}/reply
+    // -------------------------
+    // Officer submits a reply to a specific query.
+    // Fetches the query, updates the officerReply and status, then saves it.
     @PutMapping("/{id}/reply")
     public Query replyToQuery(
             @PathVariable Long id,
             @RequestBody Query updatedQuery
     ) {
 
+        // Fetch the existing query from the database
         Query query =
                 queryService.getQueryById(id);
 
+        // Update the officerReply field with the officer's response
         query.setOfficerReply(
                 updatedQuery.getOfficerReply()
         );
 
+        // Mark the query as resolved after the officer has replied
         query.setStatus("RESOLVED");
 
+        // Persist the updated query back to MySQL
         return queryService.saveQuery(query);
     }
 }

@@ -17,23 +17,5 @@ export default defineConfig([
       globals: globals.browser,
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
-    rules: {
-      // Data fetching in useEffect with async functions is the standard React pattern
-      'react-hooks/set-state-in-effect': 'off',
-      // React compiler memoization check — off since we use manual useCallback
-      'react-hooks/preserve-manual-memoization': 'off',
-      // Allow unused vars/args prefixed with _ (used in catch blocks)
-      'no-unused-vars': ['error', {
-        varsIgnorePattern: '^_',
-        argsIgnorePattern: '^_',
-        caughtErrorsIgnorePattern: '^_',
-        caughtErrors: 'all',
-      }],
-      // Allow context files to export both context object and provider component
-      'react-refresh/only-export-components': ['warn', {
-        allowConstantExport: true,
-        allowExportNames: ['AuthContext'],
-      }],
-    },
   },
 ])
