@@ -13,9 +13,20 @@
 
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { registerUser } from "../services/authService"
+import { registerUser } from "../../services/authService"
 import toast from "react-hot-toast"
 import { FaLeaf, FaUser, FaEnvelope, FaLock, FaUserTag } from "react-icons/fa"
+
+// Valid email: local@domain.tld — domain must have a dot and a TLD
+const EMAIL_REGEX = /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
+
+function validatePassword(pwd) {
+  if (pwd.length < 6)               return "Password must be at least 6 characters"
+  if (!/[A-Z]/.test(pwd))           return "Password must contain at least 1 uppercase letter"
+  if (!/[a-z]/.test(pwd))           return "Password must contain at least 1 lowercase letter"
+  if (!/[0-9]/.test(pwd))           return "Password must contain at least 1 number"
+  return null
+}
 
 function Register() {
 
@@ -48,10 +59,15 @@ function Register() {
   // -------------------------
   const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log("FORM SUBMITTED")
 
-    if (formData.password.length < 6) {
-      toast.error("Password must be at least 6 characters")
+    if (!EMAIL_REGEX.test(formData.email.trim())) {
+      toast.error("Please enter a valid email address (e.g. user@gmail.com)")
+      return
+    }
+
+    const pwdError = validatePassword(formData.password)
+    if (pwdError) {
+      toast.error(pwdError)
       return
     }
 
@@ -68,8 +84,13 @@ function Register() {
 
       console.error(error)
 
-      if (error.response?.data?.message?.includes("User already exists")) {
-        toast.error("User already exists ❌")
+      const msg = error.response?.data?.message || ""
+      if (msg.includes("User already exists")) {
+        toast.error("An account with this email already exists ❌")
+      } else if (msg.includes("Invalid email")) {
+        toast.error("Please enter a valid email address ❌")
+      } else if (msg.includes("Password must")) {
+        toast.error(msg + " ❌")
       } else {
         toast.error("Registration Failed ❌")
       }
@@ -193,13 +214,18 @@ function Register() {
                   <input
                     type="password"
                     name="password"
-                    placeholder="Minimum 6 characters"
+                    placeholder="Min 6 chars, uppercase, lowercase, number"
                     value={formData.password}
                     onChange={handleChange}
                     required
                     className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50 focus:bg-white transition"
                   />
                 </div>
+                {formData.password && validatePassword(formData.password) && (
+                  <p className="text-xs text-red-500 mt-1 ml-1">
+                    {validatePassword(formData.password)}
+                  </p>
+                )}
               </div>
 
               {/* Role Dropdown */}

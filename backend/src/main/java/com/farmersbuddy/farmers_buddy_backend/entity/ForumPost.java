@@ -30,6 +30,9 @@ public class ForumPost {
     // Name of the user who posted this discussion
     private String author;
 
+    // Role of the user who posted (FARMER / OFFICER / EXPERT / ADMIN)
+    private String authorRole;
+
     // Post content — @Column(length=1000) sets VARCHAR(1000) in MySQL
     @Column(length = 1000)
     private String content;
@@ -68,6 +71,14 @@ public class ForumPost {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public String getAuthorRole() {
+        return authorRole;
+    }
+
+    public void setAuthorRole(String authorRole) {
+        this.authorRole = authorRole;
     }
 
     public String getContent() {

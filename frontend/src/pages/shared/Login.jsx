@@ -12,9 +12,11 @@
 
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { loginUser } from "../services/authService"
+import { loginUser } from "../../services/authService"
 import toast from "react-hot-toast"
 import { FaLeaf, FaEnvelope, FaLock } from "react-icons/fa"
+
+const EMAIL_REGEX = /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
 
 function Login() {
 
@@ -37,6 +39,12 @@ function Login() {
   // -------------------------
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    if (!EMAIL_REGEX.test(formData.email.trim())) {
+      toast.error("Please enter a valid email address")
+      return
+    }
+
     setLoading(true)
 
     try {

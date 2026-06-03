@@ -11,13 +11,13 @@
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 
-import FarmerSidebar from "../components/FarmerSidebar"
-import StatsCard     from "../components/StatsCard"
-import QueryCard     from "../components/QueryCard"
-import LoadingSpinner from "../components/LoadingSpinner"
-import EmptyState    from "../components/EmptyState"
+import FarmerSidebar from "../../components/FarmerSidebar"
+import StatsCard     from "../../components/StatsCard"
+import QueryCard     from "../../components/QueryCard"
+import LoadingSpinner from "../../components/LoadingSpinner"
+import EmptyState    from "../../components/EmptyState"
 
-import { createQuery, getQueriesByFarmer } from "../services/queryService"
+import { createQuery, getQueriesByFarmer } from "../../services/queryService"
 
 import {
   FaCheckCircle,

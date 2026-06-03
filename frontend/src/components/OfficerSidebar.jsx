@@ -4,6 +4,7 @@ import {
   FaSeedling,
   FaCalendarAlt,
   FaBullhorn,
+  FaComments,
   FaUserCircle,
 } from "react-icons/fa"
 
@@ -12,6 +13,7 @@ const navItems = [
   { label: "Recommendations",  icon: <FaSeedling />,      path: "/officer/recommendations" },
   { label: "Trainings",        icon: <FaCalendarAlt />,   path: "/officer/trainings"       },
   { label: "Awareness Drives", icon: <FaBullhorn />,      path: "/officer/awareness"       },
+  { label: "Community Forum",  icon: <FaComments />,      path: "/officer/forum"           },
   { label: "My Profile",       icon: <FaUserCircle />,    path: "/officer/profile"         },
 ]
 

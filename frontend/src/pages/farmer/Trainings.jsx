@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 
-import FarmerSidebar  from "../components/FarmerSidebar"
-import TrainingCard   from "../components/TrainingCard"
-import LoadingSpinner from "../components/LoadingSpinner"
-import EmptyState     from "../components/EmptyState"
+import FarmerSidebar  from "../../components/FarmerSidebar"
+import TrainingCard   from "../../components/TrainingCard"
+import LoadingSpinner from "../../components/LoadingSpinner"
+import EmptyState     from "../../components/EmptyState"
 
-import { getAllTrainings, enrollTraining, getMyEnrollments } from "../services/trainingService"
+import { getAllTrainings, enrollTraining, getMyEnrollments } from "../../services/trainingService"
 
 function Trainings() {
 

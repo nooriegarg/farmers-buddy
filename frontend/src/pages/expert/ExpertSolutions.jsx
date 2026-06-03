@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 
-import ExpertSidebar  from "../components/ExpertSidebar"
-import LoadingSpinner from "../components/LoadingSpinner"
-import EmptyState     from "../components/EmptyState"
+import ExpertSidebar  from "../../components/ExpertSidebar"
+import LoadingSpinner from "../../components/LoadingSpinner"
+import EmptyState     from "../../components/EmptyState"
 
-import { addSolution, getMySolutions, deleteSolution } from "../services/expertSolutionService"
+import { addSolution, getMySolutions, deleteSolution } from "../../services/expertSolutionService"
 
 import { FaLightbulb, FaPlus, FaTrash } from "react-icons/fa"
 

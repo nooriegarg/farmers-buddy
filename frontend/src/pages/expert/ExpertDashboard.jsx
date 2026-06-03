@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
-import ExpertSidebar  from "../components/ExpertSidebar"
-import StatsCard      from "../components/StatsCard"
-import LoadingSpinner from "../components/LoadingSpinner"
+import ExpertSidebar  from "../../components/ExpertSidebar"
+import StatsCard      from "../../components/StatsCard"
+import LoadingSpinner from "../../components/LoadingSpinner"
 
-import { getMySolutions } from "../services/expertSolutionService"
-import { getAllTools }     from "../services/toolService"
+import { getMySolutions } from "../../services/expertSolutionService"
+import { getAllTools }     from "../../services/toolService"
 
 import { FaLightbulb, FaTools, FaArrowRight } from "react-icons/fa"
 

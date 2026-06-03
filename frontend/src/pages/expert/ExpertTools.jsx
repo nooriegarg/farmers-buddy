@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 
-import ExpertSidebar  from "../components/ExpertSidebar"
-import ToolCard       from "../components/ToolCard"
-import LoadingSpinner from "../components/LoadingSpinner"
-import EmptyState     from "../components/EmptyState"
+import ExpertSidebar  from "../../components/ExpertSidebar"
+import ToolCard       from "../../components/ToolCard"
+import LoadingSpinner from "../../components/LoadingSpinner"
+import EmptyState     from "../../components/EmptyState"
 
-import { getAllTools, addTool, deleteTool } from "../services/toolService"
+import { getAllTools, addTool, deleteTool } from "../../services/toolService"
 
 import { FaTools, FaPlus } from "react-icons/fa"
 

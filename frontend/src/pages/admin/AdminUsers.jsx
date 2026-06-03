@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
 
-import AdminSidebar   from "../components/AdminSidebar"
-import LoadingSpinner from "../components/LoadingSpinner"
-import EmptyState     from "../components/EmptyState"
+import AdminSidebar   from "../../components/AdminSidebar"
+import LoadingSpinner from "../../components/LoadingSpinner"
+import EmptyState     from "../../components/EmptyState"
 
-import API from "../services/api"
+import API from "../../services/api"
 
 import { FaUsers, FaUserTie, FaTractor, FaShieldAlt, FaFlask } from "react-icons/fa"
 

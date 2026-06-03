@@ -6,7 +6,7 @@
 // =============================================================
 
 import { useNavigate } from "react-router-dom"
-import AdminSidebar from "../components/AdminSidebar"
+import AdminSidebar from "../../components/AdminSidebar"
 import { FaUsers, FaChartBar, FaClipboardList, FaCheckCircle, FaBullhorn, FaTools } from "react-icons/fa"
 
 // Admin metric cards data

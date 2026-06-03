@@ -1,10 +1,10 @@
 import { useState } from "react"
 import toast from "react-hot-toast"
 
-import FarmerSidebar from "../components/FarmerSidebar"
-import LoadingSpinner from "../components/LoadingSpinner"
+import FarmerSidebar from "../../components/FarmerSidebar"
+//import LoadingSpinner from "../../components/LoadingSpinner"
 
-import { analyzeSoil } from "../services/soilAnalysisService"
+import { analyzeSoil } from "../../services/soilAnalysisService"
 
 import { FaFlask, FaCheckCircle } from "react-icons/fa"
 

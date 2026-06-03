@@ -10,6 +10,7 @@ import com.farmersbuddy.farmers_buddy_backend.dto.LoginRequest;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 // =============================================================
 // AuthService.java — Business Logic Layer for Authentication
@@ -32,6 +33,10 @@ import java.util.Optional;
 @Service
 public class AuthService {
 
+    // Simple RFC-compliant email pattern: local@domain.tld
+    private static final Pattern EMAIL_PATTERN =
+        Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
+
     // Injected by Spring — provides access to the users table in MySQL
     @Autowired
     private UserRepository userRepository;
@@ -45,6 +50,20 @@ public class AuthService {
     // Throws RuntimeException if the email already exists —
     // the controller returns this as an error response to the frontend.
     public User register(RegisterRequest request) {
+
+        // Validate email format
+        if (request.getEmail() == null || !EMAIL_PATTERN.matcher(request.getEmail().trim()).matches()) {
+            throw new RuntimeException("Invalid email format");
+        }
+
+        // Validate password strength: min 6 chars, 1 uppercase, 1 lowercase, 1 digit
+        String pwd = request.getPassword() == null ? "" : request.getPassword();
+        if (pwd.length() < 6
+                || !pwd.chars().anyMatch(Character::isUpperCase)
+                || !pwd.chars().anyMatch(Character::isLowerCase)
+                || !pwd.chars().anyMatch(Character::isDigit)) {
+            throw new RuntimeException("Password must be at least 6 characters with 1 uppercase, 1 lowercase, and 1 number");
+        }
 
         // Check for existing user with the same email
         Optional<User> existingUser =
@@ -128,5 +147,13 @@ public class AuthService {
         existing.setProfileImageUrl(updatedUser.getProfileImageUrl());
 
         return userRepository.save(existing);
+    }
+
+    // =========================================================
+    // Delete User Account
+    // =========================================================
+    // Permanently removes a user from the database by ID.
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
     }
 }

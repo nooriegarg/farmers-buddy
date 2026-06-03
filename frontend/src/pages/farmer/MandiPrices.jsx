@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
 
-import FarmerSidebar  from "../components/FarmerSidebar"
-import LoadingSpinner from "../components/LoadingSpinner"
-import EmptyState     from "../components/EmptyState"
+import FarmerSidebar  from "../../components/FarmerSidebar"
+import LoadingSpinner from "../../components/LoadingSpinner"
+import EmptyState     from "../../components/EmptyState"
 
-import { getAllMandiPrices } from "../services/mandiService"
+import { getAllMandiPrices } from "../../services/mandiService"
 
 import { FaRupeeSign } from "react-icons/fa"
 

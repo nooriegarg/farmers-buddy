@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
 
-import FarmerSidebar  from "../components/FarmerSidebar"
-import LoadingSpinner from "../components/LoadingSpinner"
-import EmptyState     from "../components/EmptyState"
+import FarmerSidebar  from "../../components/FarmerSidebar"
+import LoadingSpinner from "../../components/LoadingSpinner"
+import EmptyState     from "../../components/EmptyState"
 
-import { getAllSolutions } from "../services/expertSolutionService"
+import { getAllSolutions } from "../../services/expertSolutionService"
 
 import { FaLightbulb } from "react-icons/fa"
 

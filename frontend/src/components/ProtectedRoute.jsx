@@ -1,37 +1,48 @@
 // =============================================================
-// ProtectedRoute.jsx — Route Authentication Guard
+// ProtectedRoute.jsx — Route Authentication + Role Guard
 // =============================================================
-// This component acts as a gatekeeper for all protected pages.
-// It checks whether the user has an active session by looking for
-// the "user" key in localStorage (set during login).
-//
 // Behavior:
-//   - If "user" exists in localStorage → render the requested page (children)
-//   - If "user" is missing (not logged in) → redirect to /login
+//   1. No session (no localStorage user) → redirect to /login
+//   2. Session exists but role not in allowedRoles → redirect to
+//      the user's own dashboard (prevents cross-role URL access)
+//   3. Session exists and role is allowed → render the page
 //
 // Usage in App.jsx:
-//   <ProtectedRoute>
+//   <ProtectedRoute allowedRoles={["FARMER"]}>
 //     <FarmerDashboard />
 //   </ProtectedRoute>
 //
-// Viva Tip: This is client-side route protection. The backend also
-// independently validates requests. This prevents UI access to
-// protected pages when the user is not logged in.
+// If allowedRoles is omitted, only the login check applies.
 // =============================================================
 
 import { Navigate } from "react-router-dom"
 
-function ProtectedRoute({ children }) {
+// Maps each role to its own dashboard path
+const roleDashboard = {
+  FARMER:  "/farmer-dashboard",
+  OFFICER: "/officer-dashboard",
+  ADMIN:   "/admin-dashboard",
+  EXPERT:  "/expert-dashboard",
+}
 
-  // Read the user session from localStorage
-  const user = localStorage.getItem("user")
+function ProtectedRoute({ children, allowedRoles }) {
 
-  // If no session found, redirect to the login page
-  if (!user) {
+  const stored = localStorage.getItem("user")
+
+  // Not logged in — send to login
+  if (!stored) {
     return <Navigate to="/login" />
   }
 
-  // Session exists — render the protected child component
+  const user = JSON.parse(stored)
+
+  // Role check — if allowedRoles is specified and user's role isn't in it,
+  // redirect them to their own dashboard instead of showing an error
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    const redirectTo = roleDashboard[user.role] || "/login"
+    return <Navigate to={redirectTo} />
+  }
+
   return children
 }
 

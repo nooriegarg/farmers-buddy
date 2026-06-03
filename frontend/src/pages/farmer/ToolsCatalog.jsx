@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
 
-import FarmerSidebar  from "../components/FarmerSidebar"
-import ToolCard       from "../components/ToolCard"
-import LoadingSpinner from "../components/LoadingSpinner"
-import EmptyState     from "../components/EmptyState"
+import FarmerSidebar  from "../../components/FarmerSidebar"
+import ToolCard       from "../../components/ToolCard"
+import LoadingSpinner from "../../components/LoadingSpinner"
+import EmptyState     from "../../components/EmptyState"
 
-import { getAllTools } from "../services/toolService"
+import { getAllTools } from "../../services/toolService"
 
 function ToolsCatalog() {
 

@@ -4,14 +4,25 @@
 // Displays a single forum post, all its replies, and a reply input.
 //
 // Props:
-//   post          — ForumPost object { id, author, content }
+//   post          — ForumPost object { id, author, authorRole, content }
 //   replies       — array of reply objects for this post
 //   replyText     — current reply textarea value for this post
 //   onReplyChange — function(text) — called on textarea change
 //   onReply       — function()     — called when Reply button is clicked
 // =============================================================
 
+// Role → display label and badge color
+const roleBadge = {
+  FARMER:  { label: "Community Member",    style: "bg-green-100 text-green-700"   },
+  OFFICER: { label: "Agriculture Officer", style: "bg-blue-100 text-blue-700"     },
+  EXPERT:  { label: "Agriculture Expert",  style: "bg-violet-100 text-violet-700" },
+  ADMIN:   { label: "Platform Admin",      style: "bg-red-100 text-red-700"       },
+}
+const defaultBadge = { label: "Community Member", style: "bg-gray-100 text-gray-600" }
+
 function ForumPostCard({ post, replies = [], replyText = "", onReplyChange, onReply }) {
+
+  const postBadge  = roleBadge[post.authorRole]  || defaultBadge
 
   return (
     <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow duration-200">
@@ -29,9 +40,9 @@ function ForumPostCard({ post, replies = [], replyText = "", onReplyChange, onRe
             <p className="text-white font-semibold text-sm">
               {post.author}
             </p>
-            <p className="text-green-200 text-xs">
-              Community Member
-            </p>
+            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${postBadge.style}`}>
+              {postBadge.label}
+            </span>
           </div>
         </div>
       </div>
@@ -51,19 +62,27 @@ function ForumPostCard({ post, replies = [], replyText = "", onReplyChange, onRe
             💬 {replies.length} {replies.length === 1 ? "Reply" : "Replies"}
           </p>
 
-          {replies.map((reply) => (
-            <div
-              key={reply.id}
-              className="bg-gray-50 border border-gray-100 rounded-xl px-4 py-3"
-            >
-              <p className="text-xs font-bold text-green-700 mb-1">
-                {reply.author}
-              </p>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                {reply.content}
-              </p>
-            </div>
-          ))}
+          {replies.map((reply) => {
+            const replyBadge = roleBadge[reply.authorRole] || defaultBadge
+            return (
+              <div
+                key={reply.id}
+                className="bg-gray-50 border border-gray-100 rounded-xl px-4 py-3"
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <p className="text-xs font-bold text-green-700">
+                    {reply.author}
+                  </p>
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${replyBadge.style}`}>
+                    {replyBadge.label}
+                  </span>
+                </div>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  {reply.content}
+                </p>
+              </div>
+            )
+          })}
         </div>
       )}
 

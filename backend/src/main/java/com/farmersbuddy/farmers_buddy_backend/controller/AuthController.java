@@ -105,4 +105,15 @@ public class AuthController {
 
         return authService.updateProfile(id, updatedUser);
     }
+
+    // -------------------------
+    // DELETE /api/auth/profile/{id}
+    // -------------------------
+    // Deletes a user account permanently by ID.
+    @DeleteMapping("/profile/{id}")
+    public ResponseEntity<Void> deleteProfile(@PathVariable Long id) {
+
+        authService.deleteUser(id);
+        return ResponseEntity.ok().build();
+    }
 }

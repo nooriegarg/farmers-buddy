@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
 
-import FarmerSidebar    from "../components/FarmerSidebar"
-import LoadingSpinner   from "../components/LoadingSpinner"
-import EmptyState       from "../components/EmptyState"
+import FarmerSidebar    from "../../components/FarmerSidebar"
+import LoadingSpinner   from "../../components/LoadingSpinner"
+import EmptyState       from "../../components/EmptyState"
 
-import { getAllAwarenessDrives } from "../services/awarenessService"
+import { getAllAwarenessDrives } from "../../services/awarenessService"
 
 import { FaBullhorn, FaRupeeSign, FaShieldAlt, FaLeaf } from "react-icons/fa"
 

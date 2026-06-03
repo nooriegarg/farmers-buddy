@@ -10,13 +10,13 @@
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 
-import OfficerSidebar from "../components/OfficerSidebar"
-import StatsCard      from "../components/StatsCard"
-import QueryCard      from "../components/QueryCard"
-import EmptyState     from "../components/EmptyState"
-import LoadingSpinner from "../components/LoadingSpinner"
+import OfficerSidebar from "../../components/OfficerSidebar"
+import StatsCard      from "../../components/StatsCard"
+import QueryCard      from "../../components/QueryCard"
+import EmptyState     from "../../components/EmptyState"
+import LoadingSpinner from "../../components/LoadingSpinner"
 
-import { getAllQueries, replyToQuery } from "../services/queryService"
+import { getAllQueries, replyToQuery } from "../../services/queryService"
 
 import {
   FaClipboardList,

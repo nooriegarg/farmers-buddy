@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 
-import AdminSidebar   from "../components/AdminSidebar"
-import LoadingSpinner from "../components/LoadingSpinner"
-import EmptyState     from "../components/EmptyState"
+import AdminSidebar   from "../../components/AdminSidebar"
+import LoadingSpinner from "../../components/LoadingSpinner"
+import EmptyState     from "../../components/EmptyState"
 
-import { getAllAwarenessDrives, createAwarenessDrive, deleteAwarenessDrive } from "../services/awarenessService"
+import { getAllAwarenessDrives, createAwarenessDrive, deleteAwarenessDrive } from "../../services/awarenessService"
 
 import { FaBullhorn, FaRupeeSign, FaShieldAlt, FaLeaf, FaTrash, FaPlus } from "react-icons/fa"
 

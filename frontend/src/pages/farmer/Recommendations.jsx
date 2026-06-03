@@ -1,11 +1,11 @@
 import { useState } from "react"
 import toast from "react-hot-toast"
 
-import FarmerSidebar  from "../components/FarmerSidebar"
-import LoadingSpinner from "../components/LoadingSpinner"
-import EmptyState     from "../components/EmptyState"
+import FarmerSidebar  from "../../components/FarmerSidebar"
+import LoadingSpinner from "../../components/LoadingSpinner"
+import EmptyState     from "../../components/EmptyState"
 
-import { suggestCrops } from "../services/recommendationService"
+import { suggestCrops } from "../../services/recommendationService"
 
 import { FaSeedling, FaSun, FaCloudRain, FaLeaf, FaFlask, FaSearch } from "react-icons/fa"
 

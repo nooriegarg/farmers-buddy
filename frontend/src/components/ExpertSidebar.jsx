@@ -3,14 +3,16 @@ import {
   FaTachometerAlt,
   FaLightbulb,
   FaTools,
+  FaComments,
   FaUserCircle,
 } from "react-icons/fa"
 
 const navItems = [
-  { label: "Dashboard",    icon: <FaTachometerAlt />, path: "/expert-dashboard" },
-  { label: "My Solutions", icon: <FaLightbulb />,     path: "/expert/solutions" },
-  { label: "Upload Tools", icon: <FaTools />,         path: "/expert/tools"     },
-  { label: "My Profile",   icon: <FaUserCircle />,    path: "/expert/profile"   },
+  { label: "Dashboard",       icon: <FaTachometerAlt />, path: "/expert-dashboard" },
+  { label: "My Solutions",    icon: <FaLightbulb />,     path: "/expert/solutions" },
+  { label: "Upload Tools",    icon: <FaTools />,         path: "/expert/tools"     },
+  { label: "Community Forum", icon: <FaComments />,      path: "/expert/forum"     },
+  { label: "My Profile",      icon: <FaUserCircle />,    path: "/expert/profile"   },
 ]
 
 function ExpertSidebar() {

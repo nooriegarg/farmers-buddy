@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 
-import OfficerSidebar from "../components/OfficerSidebar"
-import TrainingCard   from "../components/TrainingCard"
-import LoadingSpinner from "../components/LoadingSpinner"
-import EmptyState     from "../components/EmptyState"
+import OfficerSidebar from "../../components/OfficerSidebar"
+import TrainingCard   from "../../components/TrainingCard"
+import LoadingSpinner from "../../components/LoadingSpinner"
+import EmptyState     from "../../components/EmptyState"
 
 import {
   createTraining,
   getAllTrainings,
-} from "../services/trainingService"
+} from "../../services/trainingService"
 
 import { FaCalendarAlt, FaPlus } from "react-icons/fa"
 

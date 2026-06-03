@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import toast from "react-hot-toast"
 
-import FarmerSidebar  from "../components/FarmerSidebar"
-import OfficerSidebar from "../components/OfficerSidebar"
-import AdminSidebar   from "../components/AdminSidebar"
-import ExpertSidebar  from "../components/ExpertSidebar"
-import LoadingSpinner from "../components/LoadingSpinner"
+import FarmerSidebar  from "../../components/FarmerSidebar"
+import OfficerSidebar from "../../components/OfficerSidebar"
+import AdminSidebar   from "../../components/AdminSidebar"
+import ExpertSidebar  from "../../components/ExpertSidebar"
+import LoadingSpinner from "../../components/LoadingSpinner"
 
-import { getProfile, updateProfile } from "../services/profileService"
+import { getProfile, updateProfile, deleteProfile } from "../../services/profileService"
 
-import { FaUserCircle, FaSave, FaPhone, FaMapMarkerAlt, FaInfoCircle, FaImage } from "react-icons/fa"
+import { FaUserCircle, FaSave, FaPhone, FaMapMarkerAlt, FaInfoCircle, FaCamera, FaTrash } from "react-icons/fa"
 
 // Role → sidebar component map
 const sidebars = {
@@ -45,15 +46,15 @@ const saveButtonStyle = {
 
 function Profile() {
 
-  const user = JSON.parse(localStorage.getItem("user"))
+  const user     = JSON.parse(localStorage.getItem("user"))
+  const navigate = useNavigate()
 
-  const [form, setForm]       = useState({
-    name: "", phone: "", location: "", bio: "", profileImageUrl: ""
-  })
+  const [form, setForm]         = useState({ name: "", phone: "", location: "", bio: "", profileImageUrl: "" })
   const [fetching, setFetching] = useState(true)
   const [saving, setSaving]     = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
 
-  // Load full profile from backend on mount
   useEffect(() => {
     const load = async () => {
       try {
@@ -78,6 +79,23 @@ function Profile() {
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
+  // Convert uploaded image file to base64 and store in form state
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload a valid image file")
+      return
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Image must be smaller than 2MB")
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = () => setForm((prev) => ({ ...prev, profileImageUrl: reader.result }))
+    reader.readAsDataURL(file)
+  }
+
   const handleSave = async (e) => {
     e.preventDefault()
     if (!form.name.trim()) {
@@ -87,7 +105,6 @@ function Profile() {
     setSaving(true)
     try {
       const updated = await updateProfile(user.id, form)
-      // Update localStorage so Navbar reflects new name immediately
       const updatedUser = { ...user, name: updated.name, profileImageUrl: updated.profileImageUrl }
       localStorage.setItem("user", JSON.stringify(updatedUser))
       toast.success("Profile saved ✅")
@@ -99,7 +116,22 @@ function Profile() {
     }
   }
 
-  const Sidebar = sidebars[user?.role] || <FarmerSidebar />
+  const handleDelete = async () => {
+    setDeleting(true)
+    try {
+      await deleteProfile(user.id)
+      localStorage.removeItem("user")
+      toast.success("Account deleted")
+      navigate("/")
+    } catch (err) {
+      console.error(err)
+      toast.error("Failed to delete account ❌")
+      setDeleting(false)
+      setShowDeleteModal(false)
+    }
+  }
+
+  const Sidebar  = sidebars[user?.role] || <FarmerSidebar />
   const btnStyle = saveButtonStyle[user?.role] || saveButtonStyle.FARMER
 
   return (
@@ -124,40 +156,51 @@ function Profile() {
           </div>
         </div>
 
-        <div className="flex-1 p-8">
+        <div className="flex-1 p-8 flex justify-center">
 
           {fetching ? (
             <LoadingSpinner message="Loading profile..." />
           ) : (
-            <div className="max-w-2xl space-y-6">
+            <div className="w-full max-w-2xl space-y-6">
 
               {/* Profile card */}
-              <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+              <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-8">
 
-                {/* Avatar + read-only info */}
-                <div className="flex items-center gap-5 mb-6">
-                  <div className={`ring-4 ${avatarRing[user?.role] || "ring-green-500"} rounded-full`}>
+                {/* Avatar + upload */}
+                <div className="flex flex-col items-center mb-8">
+                  <div className={`relative ring-4 ${avatarRing[user?.role] || "ring-green-500"} rounded-full mb-4`}>
                     {form.profileImageUrl ? (
                       <img
                         src={form.profileImageUrl}
                         alt="Profile"
-                        className="w-20 h-20 rounded-full object-cover"
+                        className="w-24 h-24 rounded-full object-cover"
                       />
                     ) : (
-                      <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
-                        <span className="text-3xl font-extrabold text-gray-400">
+                      <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center">
+                        <span className="text-4xl font-extrabold text-gray-400">
                           {form.name?.charAt(0)?.toUpperCase() || "?"}
                         </span>
                       </div>
                     )}
+
+                    {/* Camera overlay button */}
+                    <label className="absolute bottom-0 right-0 bg-white border border-gray-200 shadow-md rounded-full p-1.5 cursor-pointer hover:bg-gray-50 transition">
+                      <FaCamera className="text-gray-500 text-xs" />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                      />
+                    </label>
                   </div>
-                  <div>
-                    <h2 className="text-xl font-bold text-gray-800">{form.name || "—"}</h2>
-                    <p className="text-sm text-gray-400">{user?.email}</p>
-                    <span className="inline-block mt-1 text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full">
-                      {user?.role}
-                    </span>
-                  </div>
+
+                  <h2 className="text-xl font-bold text-gray-800">{form.name || "—"}</h2>
+                  <p className="text-sm text-gray-400">{user?.email}</p>
+                  <span className="inline-block mt-1 text-xs font-bold bg-gray-100 text-gray-600 px-3 py-0.5 rounded-full">
+                    {user?.role}
+                  </span>
+                  <p className="text-xs text-gray-400 mt-2">Click the camera icon to upload a profile photo</p>
                 </div>
 
                 {/* Edit form */}
@@ -217,34 +260,32 @@ function Profile() {
                     </div>
                   </div>
 
-                  {/* Profile Image URL */}
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">Profile Image URL</label>
-                    <div className="relative">
-                      <FaImage className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
-                      <input
-                        type="text" name="profileImageUrl" value={form.profileImageUrl} onChange={handleChange}
-                        placeholder="https://example.com/photo.jpg (optional)"
-                        className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Read-only email info */}
+                  {/* Read-only email */}
                   <div className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
                     <p className="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-0.5">Email (read-only)</p>
                     <p className="text-sm text-gray-600">{user?.email}</p>
                   </div>
 
-                  <button
-                    type="submit" disabled={saving}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white text-sm transition shadow-md ${
-                      saving ? "bg-gray-400 cursor-not-allowed" : btnStyle
-                    }`}
-                  >
-                    <FaSave className="text-xs" />
-                    {saving ? "Saving..." : "Save Profile"}
-                  </button>
+                  <div className="flex items-center gap-3 pt-2">
+                    <button
+                      type="submit" disabled={saving}
+                      className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white text-sm transition shadow-md ${
+                        saving ? "bg-gray-400 cursor-not-allowed" : btnStyle
+                      }`}
+                    >
+                      <FaSave className="text-xs" />
+                      {saving ? "Saving..." : "Save Profile"}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setShowDeleteModal(true)}
+                      className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-red-600 text-sm border-2 border-red-200 hover:bg-red-50 transition"
+                    >
+                      <FaTrash className="text-xs" />
+                      Delete Account
+                    </button>
+                  </div>
 
                 </form>
               </div>
@@ -252,6 +293,45 @@ function Profile() {
           )}
         </div>
       </div>
+
+      {/* ---- Delete Confirmation Modal ---- */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8">
+
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center justify-center w-14 h-14 bg-red-100 rounded-2xl mb-3">
+                <FaTrash className="text-red-600 text-xl" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900">Delete Account?</h2>
+              <p className="text-gray-500 text-sm mt-2">
+                This will permanently delete your account and all your data. This action cannot be undone.
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className={`flex-1 py-3 rounded-xl font-bold text-white text-sm transition ${
+                  deleting ? "bg-gray-400 cursor-not-allowed" : "bg-red-600 hover:bg-red-700"
+                }`}
+              >
+                {deleting ? "Deleting..." : "Yes, Delete"}
+              </button>
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                disabled={deleting}
+                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-bold text-sm transition"
+              >
+                Cancel
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }

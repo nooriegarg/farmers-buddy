@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 
-import AdminSidebar   from "../components/AdminSidebar"
-import LoadingSpinner from "../components/LoadingSpinner"
-import EmptyState     from "../components/EmptyState"
+import AdminSidebar   from "../../components/AdminSidebar"
+import LoadingSpinner from "../../components/LoadingSpinner"
+import EmptyState     from "../../components/EmptyState"
 
-import { getAllMandiPrices, addMandiPrice, deleteMandiPrice } from "../services/mandiService"
+import { getAllMandiPrices, addMandiPrice, deleteMandiPrice } from "../../services/mandiService"
 
 import { FaRupeeSign, FaPlus, FaTrash } from "react-icons/fa"
 
