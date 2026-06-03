@@ -74,9 +74,9 @@ public class SecurityConfig {
         CorsConfiguration configuration =
                 new CorsConfiguration();
 
-        // Allow requests only from the React dev server
+        // Allow requests from the React dev server (Vite uses 5173 by default, 5174 if taken)
         configuration.setAllowedOrigins(
-                List.of("http://localhost:5174")
+                List.of("http://localhost:5173", "http://localhost:5174")
         );
 
         // Allow the standard HTTP methods used by REST APIs

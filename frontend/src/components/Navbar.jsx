@@ -1,108 +1,101 @@
 // =============================================================
-// Navbar.jsx — Top Navigation Bar
+// Navbar.jsx — Top Navigation Bar (Enhanced)
 // =============================================================
-// Persistent navigation bar displayed on every page of the app.
-// Reads the current user from localStorage to conditionally render:
-//   - Guest view: Home | Login | Register links
-//   - Logged-in view: Username button (navigates to dashboard) | Logout button
-//
-// Role-based navigation:
-//   - FARMER → navigates to /farmer-dashboard on username click
-//   - OFFICER → navigates to /officer-dashboard on username click
-//
-// Logout Flow:
-//   1. Remove "user" key from localStorage (clears session)
-//   2. Show success toast notification
-//   3. Redirect to /login via React Router's useNavigate
+// Persistent navigation bar shown on every page.
+// - Guest view: Home | Login | Register
+// - Logged-in view: Username (→ dashboard) | Logout
+// - Role-based navigation on username click
 // =============================================================
 
 import { Link, useNavigate } from "react-router-dom"
 import toast from "react-hot-toast"
+import { FaLeaf } from "react-icons/fa"
 
 function Navbar() {
 
   const navigate = useNavigate()
 
-  // Read the logged-in user from localStorage (set during login)
+  // Read the logged-in user from localStorage (set on login)
   const user = JSON.parse(localStorage.getItem("user"))
 
   // -------------------------
-  // Logout Handler
+  // Logout: clear session → toast → redirect
   // -------------------------
-  // Clears the session, shows a toast, and redirects to login
   const handleLogout = () => {
-
     localStorage.removeItem("user")
-
-    toast.success("Logged Out Successfully ✅")
-
+    toast.success("Logged out successfully")
     navigate("/login")
   }
 
+  // Navigate to the correct dashboard based on user role
+  const handleDashboard = () => {
+    if (user?.role === "FARMER")  navigate("/farmer-dashboard")
+    if (user?.role === "OFFICER") navigate("/officer-dashboard")
+    if (user?.role === "ADMIN")   navigate("/admin-dashboard")
+    if (user?.role === "EXPERT")  navigate("/expert-dashboard")
+  }
+
   return (
-    <nav className="bg-green-700 text-white shadow-lg">
+    <nav className="bg-gradient-to-r from-green-900 to-green-700 text-white shadow-lg sticky top-0 z-50">
 
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
 
-        {/* Brand / Logo — clicking navigates to home */}
-        <Link
-          to="/"
-          className="text-2xl font-bold tracking-wide"
-        >
-          Farmers Buddy 🌾
+        {/* ---- Brand / Logo ---- */}
+        <Link to="/" className="flex items-center gap-2 group">
+          <div className="bg-white/15 p-2 rounded-xl group-hover:bg-white/25 transition">
+            <FaLeaf className="text-green-200 text-xl" />
+          </div>
+          <span className="text-xl font-extrabold tracking-wide">
+            Farmers <span className="text-amber-300">Buddy</span>
+          </span>
         </Link>
 
-        <div className="flex gap-6 text-lg items-center">
+        {/* ---- Navigation Links ---- */}
+        <div className="flex items-center gap-4 text-sm font-medium">
 
           <Link
             to="/"
-            className="hover:text-green-200 transition"
+            className="px-3 py-1.5 rounded-lg hover:bg-white/10 transition"
           >
             Home
           </Link>
 
-          {/* Conditional rendering: show login/register for guests, dashboard/logout for users */}
           {!user ? (
 
-            // Guest links — shown when no user session exists
+            // Guest: show login + register links
             <>
               <Link
                 to="/login"
-                className="hover:text-green-200 transition"
+                className="px-4 py-2 rounded-xl hover:bg-white/10 transition"
               >
                 Login
               </Link>
 
               <Link
                 to="/register"
-                className="hover:text-green-200 transition"
+                className="bg-amber-500 hover:bg-amber-400 text-white px-4 py-2 rounded-xl font-semibold transition shadow-md"
               >
-                Register
+                Get Started
               </Link>
             </>
+
           ) : (
 
-            // Authenticated user controls
+            // Authenticated: show user name + logout
             <>
-              {/* Username button — navigates to the role-specific dashboard */}
               <button
-                    onClick={() => {
-
-                      if (user.role === "FARMER") {
-                        navigate("/farmer-dashboard")
-                      } else if (user.role === "OFFICER") {
-                        navigate("/officer-dashboard")
-                      }
-                    }}
-                    className="bg-green-700 text-white px-4 py-2 rounded-xl hover:bg-green-800 transition"
-                  >
-                    {user.name}
+                onClick={handleDashboard}
+                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl transition"
+              >
+                <span className="w-7 h-7 bg-amber-400 text-green-900 rounded-full flex items-center justify-center font-bold text-sm">
+                  {user.name?.charAt(0).toUpperCase()}
+                </span>
+                <span>{user.name}</span>
               </button>
 
-              {/* Logout button — clears session and redirects */}
               <button
                 onClick={handleLogout}
-                className="bg-white text-green-700 px-4 py-2 rounded-lg font-semibold hover:bg-green-100 transition"
+                className="bg-white text-green-800 hover:bg-green-100 px-4 py-2 rounded-xl font-semibold transition"
               >
                 Logout
               </button>

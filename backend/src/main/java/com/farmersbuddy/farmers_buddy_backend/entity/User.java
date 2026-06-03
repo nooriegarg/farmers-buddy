@@ -45,8 +45,17 @@ public class User {
     // Password stored as plain text (current version)
     private String password;
 
-    // User role: FARMER | OFFICER | ADMIN
+    // User role: FARMER | OFFICER | ADMIN | EXPERT
     private String role;
+
+    // Optional profile fields — added for profile management
+    private String phone;
+    private String location;
+
+    @Column(length = 1000)
+    private String bio;
+
+    private String profileImageUrl;
 
     // -------------------------
     // Constructors
@@ -105,5 +114,37 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 }

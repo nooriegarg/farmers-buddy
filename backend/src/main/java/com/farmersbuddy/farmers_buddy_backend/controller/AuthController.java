@@ -6,7 +6,10 @@ import com.farmersbuddy.farmers_buddy_backend.service.AuthService;
 import com.farmersbuddy.farmers_buddy_backend.dto.LoginRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 // =============================================================
 // AuthController.java — REST Controller for Authentication APIs
@@ -62,10 +65,44 @@ public class AuthController {
     // -------------------------
     // Accepts a LoginRequest JSON body (email, password).
     // Returns the full User object (including role) on successful login.
-    // Returns null if credentials are invalid — frontend handles this case.
+    // Returns HTTP 401 if credentials are invalid — frontend handles this case.
     @PostMapping("/login")
-    public User loginUser(@RequestBody LoginRequest request) {
+    public ResponseEntity<User> loginUser(@RequestBody LoginRequest request) {
+        User user = authService.login(request);
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        return ResponseEntity.ok(user);
+    }
 
-        return authService.login(request);
+    // -------------------------
+    // GET /api/auth/users
+    // -------------------------
+    // Returns all registered users — used by the Admin user management page.
+    @GetMapping("/users")
+    public List<User> getAllUsers() {
+
+        return authService.getAllUsers();
+    }
+
+    // -------------------------
+    // GET /api/auth/profile/{id}
+    // -------------------------
+    // Returns the full profile of a user by ID — used to pre-fill the Profile page.
+    @GetMapping("/profile/{id}")
+    public User getProfile(@PathVariable Long id) {
+
+        return authService.getById(id);
+    }
+
+    // -------------------------
+    // PUT /api/auth/profile/{id}
+    // -------------------------
+    // Updates editable profile fields (name, phone, location, bio, profileImageUrl).
+    // Email, password, and role are NOT changed here.
+    @PutMapping("/profile/{id}")
+    public User updateProfile(@PathVariable Long id, @RequestBody User updatedUser) {
+
+        return authService.updateProfile(id, updatedUser);
     }
 }

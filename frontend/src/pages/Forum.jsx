@@ -1,312 +1,183 @@
-// =============================================================
-// Forum.jsx — Community Discussion Forum Page
-// =============================================================
-// Allows all logged-in users to participate in a community forum.
-// Users can create new discussion posts and reply to existing ones.
-//
-// Data Flow:
-//   - On mount: fetches all forum posts via GET /api/forum
-//     and for each post, fetches its replies via GET /api/forum-replies/{postId}
-//   - On new post: POST /api/forum → saves post → re-fetches all posts + replies
-//   - On reply: POST /api/forum-replies → saves reply → re-fetches replies for that post
-//
-// State Management:
-//   - post       : string — current value of the new post textarea
-//   - posts      : array  — all forum posts fetched from backend
-//   - replyText  : object map { postId: replyString } — per-post reply input tracking
-//   - replies    : object map { postId: [replyArray] } — replies grouped by postId
-//
-// Key Interaction:
-//   fetchReplies(postId) is called for each post after loading,
-//   and again after a new reply is submitted to stay in sync.
-// =============================================================
-
 import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 
-import FarmerSidebar from "../components/FarmerSidebar"
+import FarmerSidebar    from "../components/FarmerSidebar"
+import ForumPostCard    from "../components/ForumPostCard"
+import EmptyState       from "../components/EmptyState"
+import LoadingSpinner   from "../components/LoadingSpinner"
 
-import {
-  createForumPost,
-  getAllForumPosts
-} from "../services/forumService"
+import { createForumPost, getAllForumPosts }   from "../services/forumService"
+import { createReply, getRepliesByPostId }     from "../services/forumReplyService"
 
-import {
-  createReply,
-  getRepliesByPostId
-} from "../services/forumReplyService"
+import { FaComments, FaPaperPlane } from "react-icons/fa"
 
 function Forum() {
 
-  // Read the logged-in user from localStorage (for author field)
-  const user =
-    JSON.parse(localStorage.getItem("user"))
+  const user = JSON.parse(localStorage.getItem("user"))
 
-  // -------------------------
-  // State Declarations
-  // -------------------------
+  const [post, setPost]         = useState("")
+  const [posts, setPosts]       = useState([])
+  const [replyText, setReplyText] = useState({})
+  const [replies, setReplies]   = useState({})
+  const [fetching, setFetching] = useState(true)
+  const [posting, setPosting]   = useState(false)
 
-  // New post textarea value
-  const [post, setPost] = useState("")
-
-  // List of all forum posts
-  const [posts, setPosts] = useState([])
-
-  // Reply text per post: { [postId]: "reply string" }
-  const [replyText, setReplyText] =
-    useState({})
-
-  // Replies per post: { [postId]: [reply objects] }
-  const [replies, setReplies] =
-    useState({})
-
-  // -------------------------
-  // Fetch Replies for a Post
-  // -------------------------
-  // Loads all replies for a specific postId and merges them into the replies state map.
-  // Uses functional update form (prev => ...) to avoid stale closures.
   const fetchReplies = async (postId) => {
-
     try {
-
-      const data =
-        await getRepliesByPostId(postId)
-
-      setReplies((prev) => ({
-        ...prev,
-        [postId]: data,
-      }))
-
+      const data = await getRepliesByPostId(postId)
+      setReplies((prev) => ({ ...prev, [postId]: data }))
     } catch (error) {
-
       console.error(error)
     }
   }
 
-  // -------------------------
-  // Load All Posts on Mount
-  // -------------------------
-  // After fetching posts, immediately fetches replies for every post
-  // so the forum displays a fully populated threaded view.
   useEffect(() => {
-
     const loadPosts = async () => {
-
       try {
-
-        const data =
-          await getAllForumPosts()
-
+        const data = await getAllForumPosts()
         setPosts(data)
-
-        // Fetch replies for each post in parallel
-        data.forEach((post) => {
-
-          fetchReplies(post.id)
-        })
-
+        data.forEach((p) => fetchReplies(p.id))
       } catch (error) {
-
         console.error(error)
+      } finally {
+        setFetching(false)
       }
     }
-
     loadPosts()
-
   }, [])
 
-  // -------------------------
-  // Create New Forum Post
-  // -------------------------
-  // Guards against empty submissions, posts the new discussion,
-  // then re-fetches all posts and their replies to keep UI in sync.
   const handlePost = async () => {
-
     if (!post.trim()) return
-
+    setPosting(true)
     try {
-
-      const postData = {
-
-        author: user.name,
-        content: post,
-      }
-
-      await createForumPost(postData)
-
-      // Reload all posts after creating a new one
-      const updatedPosts =
-        await getAllForumPosts()
-
+      const newPost = await createForumPost({ author: user.name, content: post })
+      toast.success("Discussion posted ✅")
+      const updatedPosts = await getAllForumPosts()
       setPosts(updatedPosts)
-
-      // Re-fetch replies for all posts including the new one
-      updatedPosts.forEach((post) => {
-
-        fetchReplies(post.id)
-      })
-
-      // Clear the new post textarea
+      // Only fetch replies for the newly created post
+      if (newPost?.id) fetchReplies(newPost.id)
       setPost("")
-
     } catch (error) {
-
       console.error(error)
+      toast.error("Failed to post ❌")
+    } finally {
+      setPosting(false)
     }
   }
 
-  // -------------------------
-  // Create Reply to a Post
-  // -------------------------
-  // Guards against empty reply, submits the reply with author and postId,
-  // then refreshes only the replies for the affected post.
   const handleReply = async (postId) => {
-
     if (!replyText[postId]?.trim()) return
-
     try {
-
-      const replyData = {
-
-        postId: postId,
-        author: user.name,
-        content: replyText[postId],
-      }
-
-      await createReply(replyData)
-
-      // Refresh only the replies for this specific post
+      await createReply({ postId, author: user.name, content: replyText[postId] })
+      toast.success("Reply submitted ✅")
       fetchReplies(postId)
-
-      // Clear the reply input for this post
-      setReplyText({
-        ...replyText,
-        [postId]: "",
-      })
-
+      setReplyText({ ...replyText, [postId]: "" })
     } catch (error) {
-
       console.error(error)
+      toast.error("Failed to reply ❌")
     }
   }
 
-  // -------------------------
-  // Render
-  // -------------------------
   return (
+    <div className="min-h-screen bg-gray-50 flex">
 
-    <div className="min-h-screen bg-gray-100 flex">
-
-      {/* Left sidebar for farmer navigation */}
       <FarmerSidebar />
 
-      {/* Main content area */}
-      <div className="flex-1 p-10">
+      <div className="flex-1 flex flex-col">
 
-        <h1 className="text-4xl font-bold text-green-700 mb-10">
-          Farmer Community Forum 💬
-        </h1>
-
-        {/* ----------------------------- */}
-        {/* Create New Post Section       */}
-        {/* ----------------------------- */}
-        <div className="bg-white p-6 rounded-2xl shadow-lg mb-10">
-
-          <textarea
-            rows="4"
-            placeholder="Share your farming question or discussion..."
-            value={post}
-            onChange={(e) =>
-              setPost(e.target.value)
-            }
-            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
-
-          <button
-            onClick={handlePost}
-            className="mt-4 bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-xl font-semibold transition"
-          >
-            Post Discussion
-          </button>
-
+        {/* Banner */}
+        <div
+          className="relative px-10 py-10 overflow-hidden"
+          style={{ background: "linear-gradient(135deg, #14532d 0%, #166534 50%, #15803d 100%)" }}
+        >
+          <div className="absolute -top-10 -right-10 w-48 h-48 bg-white/5 rounded-full" />
+          <div className="relative z-10">
+            <p className="text-green-300 text-sm font-medium mb-1">Community</p>
+            <h1 className="text-3xl font-extrabold text-white">Farmer Forum 💬</h1>
+            <p className="text-green-200 text-sm mt-1">
+              Share questions, ideas, and experiences with the farming community.
+            </p>
+          </div>
         </div>
 
-        {/* ----------------------------- */}
-        {/* Forum Posts List              */}
-        {/* ----------------------------- */}
-        {/* Each post card shows: author, content, threaded replies, and a reply input */}
-        <div className="grid gap-6">
+        <div className="flex-1 p-8 space-y-6">
 
-          {posts.map((item) => (
+          {/* New Post Card */}
+          <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
 
-            <div
-              key={item.id}
-              className="bg-white p-6 rounded-2xl shadow-lg"
-            >
-
-              {/* Post author and content */}
-              <h2 className="text-xl font-bold text-green-700">
-                {item.author}
-              </h2>
-
-              <p className="text-gray-700 mt-3">
-                {item.content}
-              </p>
-
-              {/* ----------------------------- */}
-              {/* Threaded Replies              */}
-              {/* ----------------------------- */}
-              {/* replies[item.id] holds the array of reply objects for this post */}
-              <div className="mt-6 space-y-3">
-
-                {replies[item.id]?.map((reply) => (
-
-                  <div
-                    key={reply.id}
-                    className="bg-gray-100 p-4 rounded-xl"
-                  >
-
-                    <h3 className="font-bold text-green-700">
-                      {reply.author}
-                    </h3>
-
-                    <p className="text-gray-700 mt-1">
-                      {reply.content}
-                    </p>
-
-                  </div>
-                ))}
-
+            <div className="flex items-center gap-3 mb-4">
+              <div className="bg-green-100 p-2.5 rounded-xl">
+                <FaComments className="text-green-700 text-lg" />
               </div>
-
-              {/* Reply input for this specific post */}
-              {/* replyText[item.id] tracks the reply text per post individually */}
-              <textarea
-                rows="2"
-                placeholder="Write a reply..."
-                value={replyText[item.id] || ""}
-                onChange={(e) =>
-                  setReplyText({
-                    ...replyText,
-                    [item.id]: e.target.value,
-                  })
-                }
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 mt-4"
-              />
-
-              <button
-                onClick={() =>
-                  handleReply(item.id)
-                }
-                className="mt-3 bg-green-700 hover:bg-green-800 text-white px-5 py-2 rounded-xl"
-              >
-                Reply
-              </button>
-
+              <div>
+                <h2 className="text-lg font-bold text-gray-800">Start a Discussion</h2>
+                <p className="text-gray-400 text-xs">Share a question or topic with the community</p>
+              </div>
             </div>
-          ))}
+
+            <textarea
+              rows="4"
+              placeholder="Share your farming question or experience..."
+              value={post}
+              onChange={(e) => setPost(e.target.value)}
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50 focus:bg-white transition resize-none"
+            />
+
+            <button
+              onClick={handlePost}
+              disabled={posting || !post.trim()}
+              className={`mt-3 flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-white text-sm transition shadow-md ${
+                posting || !post.trim()
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-gradient-to-r from-green-700 to-green-600 hover:from-green-800 hover:to-green-700"
+              }`}
+            >
+              <FaPaperPlane className="text-xs" />
+              {posting ? "Posting..." : "Post Discussion"}
+            </button>
+
+          </div>
+
+          {/* Posts List */}
+          <div>
+
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-gray-800">Community Discussions</h2>
+              {!fetching && (
+                <span className="text-xs bg-green-100 text-green-700 font-semibold px-3 py-1 rounded-full">
+                  {posts.length} {posts.length === 1 ? "post" : "posts"}
+                </span>
+              )}
+            </div>
+
+            {fetching ? (
+              <LoadingSpinner message="Loading discussions..." />
+            ) : posts.length === 0 ? (
+              <EmptyState
+                icon="💬"
+                message="No discussions yet"
+                subtext="Be the first to start a conversation in the community"
+              />
+            ) : (
+              <div className="space-y-5">
+                {posts.map((item) => (
+                  <ForumPostCard
+                    key={item.id}
+                    post={item}
+                    replies={replies[item.id] || []}
+                    replyText={replyText[item.id] || ""}
+                    onReplyChange={(text) =>
+                      setReplyText({ ...replyText, [item.id]: text })
+                    }
+                    onReply={() => handleReply(item.id)}
+                  />
+                ))}
+              </div>
+            )}
+
+          </div>
 
         </div>
-
       </div>
     </div>
   )

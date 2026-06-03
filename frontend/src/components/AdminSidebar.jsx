@@ -1,73 +1,74 @@
 // =============================================================
-// AdminSidebar.jsx — Sidebar Navigation for Admin Role
+// AdminSidebar.jsx — Left Navigation Sidebar (Admin Role)
 // =============================================================
-// Renders the left-side navigation panel for the Admin dashboard.
-// Uses a red color theme to visually distinguish the admin panel
-// from the farmer (green) and officer (blue) interfaces.
-//
-// All navigation buttons currently point to /admin-dashboard.
-// Individual admin sub-pages can be wired up as the admin
-// feature set expands in future iterations.
+// Shown on all admin-accessible pages.
+// Uses a deep red/amber theme to visually distinguish admin interface.
 // =============================================================
 
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
+import {
+  FaTachometerAlt,
+  FaComments,
+  FaBullhorn,
+  FaBoxOpen,
+  FaUsers,
+  FaRupeeSign,
+  FaUserCircle,
+} from "react-icons/fa"
+
+const navItems = [
+  { label: "Dashboard",          icon: <FaTachometerAlt />, path: "/admin-dashboard"   },
+  { label: "Community Forum",    icon: <FaComments />,      path: "/admin/forum"       },
+  { label: "Platform Awareness", icon: <FaBullhorn />,      path: "/admin/awareness"   },
+  { label: "Resource Management",icon: <FaBoxOpen />,       path: "/admin/tools"       },
+  { label: "Mandi Prices",       icon: <FaRupeeSign />,     path: "/admin/mandi"       },
+  { label: "User Management",    icon: <FaUsers />,         path: "/admin/users"       },
+  { label: "My Profile",         icon: <FaUserCircle />,    path: "/admin/profile"     },
+]
 
 function AdminSidebar() {
 
-  const navigate = useNavigate()
+  const navigate  = useNavigate()
+  const location  = useLocation()
 
   return (
+    <div className="w-64 bg-gradient-to-b from-red-900 to-red-800 text-white flex flex-col min-h-screen shrink-0">
 
-    <div className="w-72 bg-red-800 text-white p-8 min-h-screen">
+      {/* ---- Brand header ---- */}
+      <div className="px-6 py-8 border-b border-red-700">
+        <h1 className="text-xl font-extrabold tracking-wide">
+          👨‍💼 Admin <span className="text-amber-300">Panel</span>
+        </h1>
+        <p className="text-red-300 text-xs mt-1">System Management</p>
+      </div>
 
-      {/* Sidebar brand header */}
-      <h1 className="text-3xl font-bold mb-12">
-        Admin Panel 👨‍💼
-      </h1>
+      {/* ---- Navigation items ---- */}
+      <nav className="flex-1 px-4 py-6 space-y-1">
+        {navItems.map((item) => {
 
-      {/* Navigation menu items */}
-      <div className="space-y-4 text-lg">
+          const isActive = location.pathname === item.path
 
-        {/* Main admin dashboard */}
-        <button
-          onClick={() =>
-            navigate("/admin-dashboard")
-          }
-          className="w-full text-left hover:bg-red-700 p-4 rounded-xl transition"
-        >
-          Dashboard
-        </button>
+          return (
+            <button
+              key={item.label}
+              onClick={() => navigate(item.path)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150
+                ${isActive
+                  ? "bg-amber-500 text-white shadow-md"
+                  : "text-red-100 hover:bg-red-700/60"
+                }`}
+            >
+              <span className="text-base">{item.icon}</span>
+              {item.label}
+            </button>
+          )
+        })}
+      </nav>
 
-        {/* Community Forum management */}
-        <button
-          onClick={() =>
-            navigate("/admin-dashboard")
-          }
-          className="w-full text-left hover:bg-red-700 p-4 rounded-xl transition"
-        >
-          Community Forum
-        </button>
-
-        {/* Platform awareness content management */}
-        <button
-          onClick={() =>
-            navigate("/admin-dashboard")
-          }
-          className="w-full text-left hover:bg-red-700 p-4 rounded-xl transition"
-        >
-         Platform Awareness
-        </button>
-
-        {/* Resource / tools management */}
-        <button
-          onClick={() =>
-            navigate("/admin-dashboard")
-          }
-          className="w-full text-left hover:bg-red-700 p-4 rounded-xl transition"
-        >
-          Resource Management
-        </button>
-
+      {/* ---- Footer role badge ---- */}
+      <div className="px-6 py-4 border-t border-red-700">
+        <span className="text-xs text-red-300">Logged in as</span>
+        <p className="text-sm font-bold text-amber-300 mt-0.5">ADMIN</p>
       </div>
 
     </div>

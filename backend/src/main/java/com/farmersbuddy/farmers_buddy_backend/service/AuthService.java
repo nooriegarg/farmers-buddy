@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.farmersbuddy.farmers_buddy_backend.dto.LoginRequest;
 
+import java.util.List;
 import java.util.Optional;
 
 // =============================================================
@@ -92,5 +93,40 @@ public class AuthService {
 
         // Return null if email not found or password does not match
         return null;
+    }
+
+    // =========================================================
+    // Get All Users
+    // =========================================================
+    // Returns all registered users — used by the Admin panel.
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    // =========================================================
+    // Get User By ID
+    // =========================================================
+    // Returns a single user by ID — used by the Profile page.
+    public User getById(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+
+    // =========================================================
+    // Update User Profile
+    // =========================================================
+    // Updates editable profile fields only — does NOT change
+    // email, password, or role (those require separate flows).
+    public User updateProfile(Long id, User updatedUser) {
+
+        User existing = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        existing.setName(updatedUser.getName());
+        existing.setPhone(updatedUser.getPhone());
+        existing.setLocation(updatedUser.getLocation());
+        existing.setBio(updatedUser.getBio());
+        existing.setProfileImageUrl(updatedUser.getProfileImageUrl());
+
+        return userRepository.save(existing);
     }
 }

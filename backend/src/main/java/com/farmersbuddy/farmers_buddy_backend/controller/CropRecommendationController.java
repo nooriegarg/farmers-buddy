@@ -1,11 +1,15 @@
 package com.farmersbuddy.farmers_buddy_backend.controller;
 
+import com.farmersbuddy.farmers_buddy_backend.dto.CropSuggestionRequest;
 import com.farmersbuddy.farmers_buddy_backend.entity.CropRecommendation;
 import com.farmersbuddy.farmers_buddy_backend.repository.CropRecommendationRepository;
+import com.farmersbuddy.farmers_buddy_backend.service.CropRecommendationService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 // =============================================================
 // CropRecommendationController.java — REST Controller for Crop Recommendations
@@ -29,11 +33,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/recommendations")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin("*")
 public class CropRecommendationController {
 
     // Repository injected via constructor (constructor injection pattern)
     private final CropRecommendationRepository repository;
+
+    // Service for rule-based smart crop suggestions
+    @Autowired
+    private CropRecommendationService cropRecommendationService;
 
     public CropRecommendationController(
             CropRecommendationRepository repository
@@ -62,5 +70,18 @@ public class CropRecommendationController {
     public List<CropRecommendation> getAllRecommendations() {
 
         return repository.findAll();
+    }
+
+    // -------------------------
+    // POST /api/recommendations/suggest
+    // -------------------------
+    // Smart crop suggestion endpoint — rule-based logic, no ML.
+    // Accepts { region, season, soilType } and returns 2-3 crop suggestions.
+    // Each suggestion: { cropName, fertilizer, note }
+    @PostMapping("/suggest")
+    public List<Map<String, String>> suggestCrops(
+            @RequestBody CropSuggestionRequest request
+    ) {
+        return cropRecommendationService.suggest(request);
     }
 }

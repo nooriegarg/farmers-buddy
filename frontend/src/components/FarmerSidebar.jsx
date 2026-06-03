@@ -1,98 +1,83 @@
 // =============================================================
-// FarmerSidebar.jsx — Sidebar Navigation for Farmer Role
+// FarmerSidebar.jsx — Left Navigation Sidebar (Farmer Role)
 // =============================================================
-// This component renders the left-side navigation panel shown on
-// all farmer-accessible pages. Each button uses React Router's
-// useNavigate hook to perform client-side navigation without a
-// full page reload.
-//
-// Navigation Links:
-//   - Dashboard      → /farmer-dashboard  (main query management page)
-//   - Recommendations → /recommendations  (crop recommendation cards)
-//   - Soil Analysis  → /soil-analysis     (soil type + region based suggestions)
-//   - Awareness Drives → /awareness       (government schemes information)
-//   - Tools Catalog  → /tools             (farming tools reference)
-//   - Community Forum → /forum            (discussion board with replies)
+// Shown on all farmer-accessible pages.
+// - Active route is highlighted using useLocation
+// - Icons from react-icons for each nav item
 // =============================================================
 
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
+import {
+  FaTachometerAlt,
+  FaSeedling,
+  FaFlask,
+  FaBullhorn,
+  FaTools,
+  FaComments,
+  FaCalendarAlt,
+  FaRupeeSign,
+  FaLightbulb,
+  FaUserCircle,
+} from "react-icons/fa"
+
+// Nav items: each has a label, icon, and target route
+const navItems = [
+  { label: "Dashboard",        icon: <FaTachometerAlt />, path: "/farmer-dashboard"        },
+  { label: "Recommendations",  icon: <FaSeedling />,      path: "/farmer/recommendations"  },
+  { label: "Soil Analysis",    icon: <FaFlask />,         path: "/farmer/soil-analysis"    },
+  { label: "Trainings",        icon: <FaCalendarAlt />,   path: "/farmer/trainings"        },
+  { label: "Mandi Prices",     icon: <FaRupeeSign />,     path: "/farmer/mandi"            },
+  { label: "Awareness Drives", icon: <FaBullhorn />,      path: "/farmer/awareness"        },
+  { label: "Expert Guidance",  icon: <FaLightbulb />,     path: "/farmer/expert-guidance"  },
+  { label: "Tools Catalog",    icon: <FaTools />,         path: "/farmer/tools"            },
+  { label: "Community Forum",  icon: <FaComments />,      path: "/farmer/forum"            },
+  { label: "My Profile",       icon: <FaUserCircle />,    path: "/farmer/profile"          },
+]
 
 function FarmerSidebar() {
 
-  const navigate = useNavigate()
+  const navigate  = useNavigate()
+  const location  = useLocation()
 
   return (
+    <div className="w-64 bg-gradient-to-b from-green-900 to-green-800 text-white flex flex-col min-h-screen shrink-0">
 
-    <div className="w-72 bg-green-800 text-white p-8 min-h-screen">
+      {/* ---- Brand header ---- */}
+      <div className="px-6 py-8 border-b border-green-700">
+        <h1 className="text-xl font-extrabold tracking-wide">
+          🌾 Farmers <span className="text-amber-300">Buddy</span>
+        </h1>
+        <p className="text-green-300 text-xs mt-1">Agriculture Support</p>
+      </div>
 
-      {/* Sidebar brand header */}
-      <h1 className="text-3xl font-bold mb-12">
-        Farmers Buddy 🌾
-      </h1>
+      {/* ---- Navigation items ---- */}
+      <nav className="flex-1 px-4 py-6 space-y-1">
+        {navItems.map((item) => {
 
-      {/* Navigation menu items */}
-      <div className="space-y-4 text-lg">
+          // Highlight the item whose path matches the current URL
+          const isActive = location.pathname === item.path
 
-        {/* Dashboard — main farmer page */}
-        <button
-          onClick={() =>
-            navigate("/farmer-dashboard")
-          }
-          className="w-full text-left hover:bg-green-700 p-4 rounded-xl transition"
-        >
-          Dashboard
-        </button>
+          return (
+            <button
+              key={item.path}
+              onClick={() => navigate(item.path)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150
+                ${isActive
+                  ? "bg-amber-500 text-white shadow-md"
+                  : "text-green-100 hover:bg-green-700/60"
+                }`}
+            >
+              <span className="text-base">{item.icon}</span>
+              {item.label}
+            </button>
+          )
+        })}
+      </nav>
 
-        {/* Crop Recommendations page */}
-        <button
-          onClick={() =>
-            navigate("/recommendations")
-          }
-          className="w-full text-left hover:bg-green-700 p-4 rounded-xl transition"
-        >
-          Recommendations
-        </button>
-
-        {/* Soil Analysis tool */}
-        <button
-          onClick={() =>
-            navigate("/soil-analysis")
-          }
-          className="w-full text-left hover:bg-green-700 p-4 rounded-xl transition"
-        >
-          Soil Analysis
-        </button>
-
-        {/* Government scheme awareness drives */}
-        <button
-          onClick={() =>
-            navigate("/awareness")
-          }
-          className="w-full text-left hover:bg-green-700 p-4 rounded-xl transition"
-        >
-          Awareness Drives
-        </button>
-
-        {/* Farming tools catalog */}
-        <button
-          onClick={() =>
-            navigate("/tools")
-          }
-          className="w-full text-left hover:bg-green-700 p-4 rounded-xl transition"
-        >
-          Tools Catalog
-        </button>
-
-        {/* Community Forum — peer discussion board */}
-        <button
-          onClick={() =>
-            navigate("/forum")
-          }
-          className="w-full text-left hover:bg-green-700 p-4 rounded-xl transition"
-        >
-          Community Forum
-        </button>
-
+      {/* ---- Footer role badge ---- */}
+      <div className="px-6 py-4 border-t border-green-700">
+        <span className="text-xs text-green-300">Logged in as</span>
+        <p className="text-sm font-bold text-amber-300 mt-0.5">FARMER</p>
       </div>
 
     </div>
