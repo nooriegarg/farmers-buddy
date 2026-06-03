@@ -21,7 +21,8 @@ function AdminTools() {
 
   const [form, setForm] = useState({
     name: "", category: "Cultivation", description: "",
-    imageUrl: "", price: "", addedBy: user?.name || ""
+    imageUrl: "", price: "", addedBy: user?.name || "",
+    brand: "", sourceUrl: ""
   })
 
   useEffect(() => {
@@ -49,7 +50,7 @@ function AdminTools() {
       toast.success("Tool added to catalog ✅")
       const updated = await getAllTools()
       setTools(updated)
-      setForm({ name: "", category: "Cultivation", description: "", imageUrl: "", price: "", addedBy: user?.name || "" })
+      setForm({ name: "", category: "Cultivation", description: "", imageUrl: "", price: "", addedBy: user?.name || "", brand: "", sourceUrl: "" })
       setShowForm(false)
     } catch (err) {
       console.error(err)
@@ -145,8 +146,21 @@ function AdminTools() {
                     className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50"
                   />
                   <input
+                    type="text" name="brand" placeholder="Brand (e.g. Mahindra)"
+                    value={form.brand} onChange={handleChange}
+                    className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50"
+                  />
+                </div>
+
+                <div className="flex gap-3">
+                  <input
                     type="text" name="imageUrl" placeholder="Image URL (optional)"
                     value={form.imageUrl} onChange={handleChange}
+                    className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50"
+                  />
+                  <input
+                    type="text" name="sourceUrl" placeholder="Buy link (Amazon/Flipkart, optional)"
+                    value={form.sourceUrl} onChange={handleChange}
                     className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50"
                   />
                 </div>

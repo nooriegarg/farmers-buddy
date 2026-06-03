@@ -50,4 +50,11 @@ public class ForumPostService {
 
         return forumPostRepository.findAll();
     }
+
+    // -------------------------
+    // Delete a Forum Post
+    // -------------------------
+    public void deletePost(Long id) {
+        forumPostRepository.deleteById(id);
+    }
 }

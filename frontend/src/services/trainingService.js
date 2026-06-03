@@ -26,3 +26,11 @@ export const getMyEnrollments = (farmerId) =>
 // Officer views all farmers who enrolled in a specific training
 export const getTrainingEnrollments = (trainingId) =>
   API.get(`/trainings/${trainingId}/enrollments`).then((res) => res.data)
+
+// Officer deletes a training session
+export const deleteTraining = (id) =>
+  API.delete(`/trainings/${id}`).then((res) => res.data)
+
+// Officer marks a training as completed
+export const markTrainingCompleted = (id) =>
+  API.put(`/trainings/${id}/complete`).then((res) => res.data)

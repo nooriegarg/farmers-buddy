@@ -1,15 +1,18 @@
 // =============================================================
 // ForumPostCard.jsx — Community Forum Post with Threaded Replies
 // =============================================================
-// Displays a single forum post, all its replies, and a reply input.
-//
 // Props:
 //   post          — ForumPost object { id, author, authorRole, content }
 //   replies       — array of reply objects for this post
 //   replyText     — current reply textarea value for this post
 //   onReplyChange — function(text) — called on textarea change
 //   onReply       — function()     — called when Reply button is clicked
+//   currentUser   — user object from localStorage (for own-content delete check)
+//   onDeletePost  — function()     — called to delete the post (owner/admin only)
+//   onDeleteReply — function(id)   — called to delete a reply (owner/admin only)
 // =============================================================
+
+import { FaTrash } from "react-icons/fa"
 
 // Role → display label and badge color
 const roleBadge = {
@@ -20,30 +23,44 @@ const roleBadge = {
 }
 const defaultBadge = { label: "Community Member", style: "bg-gray-100 text-gray-600" }
 
-function ForumPostCard({ post, replies = [], replyText = "", onReplyChange, onReply }) {
+function ForumPostCard({ post, replies = [], replyText = "", onReplyChange, onReply, currentUser, onDeletePost, onDeleteReply }) {
 
-  const postBadge  = roleBadge[post.authorRole]  || defaultBadge
+  const postBadge    = roleBadge[post.authorRole] || defaultBadge
+  const canDeletePost = currentUser && (currentUser.name === post.author || currentUser.role === "ADMIN")
 
   return (
     <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow duration-200">
 
       {/* ---- Post header ---- */}
       <div className="bg-gradient-to-r from-green-700 to-green-600 px-6 py-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between gap-3">
 
-          {/* Author avatar circle */}
-          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-lg">
-            {post.author ? post.author.charAt(0).toUpperCase() : "?"}
+          <div className="flex items-center gap-3">
+            {/* Author avatar circle */}
+            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-lg">
+              {post.author ? post.author.charAt(0).toUpperCase() : "?"}
+            </div>
+
+            <div>
+              <p className="text-white font-semibold text-sm">
+                {post.author}
+              </p>
+              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${postBadge.style}`}>
+                {postBadge.label}
+              </span>
+            </div>
           </div>
 
-          <div>
-            <p className="text-white font-semibold text-sm">
-              {post.author}
-            </p>
-            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${postBadge.style}`}>
-              {postBadge.label}
-            </span>
-          </div>
+          {/* Delete post button */}
+          {canDeletePost && onDeletePost && (
+            <button
+              onClick={onDeletePost}
+              className="text-white/70 hover:text-white transition p-1.5 rounded-lg hover:bg-white/10"
+              title="Delete post"
+            >
+              <FaTrash className="text-xs" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -64,18 +81,30 @@ function ForumPostCard({ post, replies = [], replyText = "", onReplyChange, onRe
 
           {replies.map((reply) => {
             const replyBadge = roleBadge[reply.authorRole] || defaultBadge
+            const canDeleteReply = currentUser && (currentUser.name === reply.author || currentUser.role === "ADMIN")
             return (
               <div
                 key={reply.id}
                 className="bg-gray-50 border border-gray-100 rounded-xl px-4 py-3"
               >
-                <div className="flex items-center gap-2 mb-1">
-                  <p className="text-xs font-bold text-green-700">
-                    {reply.author}
-                  </p>
-                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${replyBadge.style}`}>
-                    {replyBadge.label}
-                  </span>
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs font-bold text-green-700">
+                      {reply.author}
+                    </p>
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${replyBadge.style}`}>
+                      {replyBadge.label}
+                    </span>
+                  </div>
+                  {canDeleteReply && onDeleteReply && (
+                    <button
+                      onClick={() => onDeleteReply(reply.id)}
+                      className="text-gray-400 hover:text-red-500 transition p-1 rounded"
+                      title="Delete reply"
+                    >
+                      <FaTrash className="text-xs" />
+                    </button>
+                  )}
                 </div>
                 <p className="text-gray-600 text-sm leading-relaxed">
                   {reply.content}

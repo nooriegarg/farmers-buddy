@@ -57,4 +57,11 @@ public class ForumReplyService {
                 postId
         );
     }
+
+    // -------------------------
+    // Delete a Forum Reply
+    // -------------------------
+    public void deleteReply(Long id) {
+        forumReplyRepository.deleteById(id);
+    }
 }

@@ -6,7 +6,7 @@ import EmptyState     from "../../components/EmptyState"
 
 import { getAllSolutions } from "../../services/expertSolutionService"
 
-import { FaLightbulb } from "react-icons/fa"
+import { FaLightbulb, FaChevronDown, FaChevronUp } from "react-icons/fa"
 
 const categoryStyle = {
   "Pest Control":         { tag: "bg-red-100 text-red-700"    },
@@ -22,6 +22,10 @@ function FarmerExpertSolutions() {
 
   const [solutions, setSolutions] = useState([])
   const [fetching, setFetching]   = useState(true)
+  const [expanded, setExpanded]   = useState({})
+
+  const toggleExpand = (id) =>
+    setExpanded((prev) => ({ ...prev, [id]: !prev[id] }))
 
   useEffect(() => {
     const load = async () => {
@@ -82,6 +86,8 @@ function FarmerExpertSolutions() {
             <div className="grid md:grid-cols-2 gap-5">
               {solutions.map((s) => {
                 const tagStyle = (categoryStyle[s.category] || {}).tag || defaultTagStyle
+                const isExpanded = !!expanded[s.id]
+                const longDesc = s.description && s.description.length > 160
                 return (
                   <div key={s.id} className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 hover:shadow-lg transition-shadow">
 
@@ -99,7 +105,20 @@ function FarmerExpertSolutions() {
                       )}
                     </div>
 
-                    <p className="text-sm text-gray-600 leading-relaxed">{s.description}</p>
+                    <p className="text-sm text-gray-600 leading-relaxed">
+                      {longDesc && !isExpanded
+                        ? s.description.slice(0, 160) + "…"
+                        : s.description}
+                    </p>
+
+                    {longDesc && (
+                      <button
+                        onClick={() => toggleExpand(s.id)}
+                        className="mt-2 flex items-center gap-1 text-xs font-semibold text-green-700 hover:text-green-900 transition"
+                      >
+                        {isExpanded ? <><FaChevronUp className="text-xs" /> Show Less</> : <><FaChevronDown className="text-xs" /> Read More</>}
+                      </button>
+                    )}
 
                     {s.postedBy && (
                       <p className="text-xs text-gray-400 mt-4">

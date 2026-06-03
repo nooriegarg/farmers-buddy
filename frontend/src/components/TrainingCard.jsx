@@ -1,20 +1,19 @@
 // =============================================================
 // TrainingCard.jsx — Reusable Training Session Card Component
 // =============================================================
-// Displays a single training session with its details.
-// Used in: Trainings.jsx (farmer and officer views)
-//
 // Props:
-//   training   — Training object { title, description, location, date,
-//                                  time, officerName, maxParticipants, status }
-//   enrolled   — boolean — true if the current farmer has already joined
-//   onEnroll   — function() — called when the farmer clicks "Join Training"
-//   isOfficer  — boolean — hides enroll button for officer role
+//   training       — Training object
+//   enrolled       — boolean — true if farmer already joined
+//   onEnroll       — function() — farmer clicks "Join Training"
+//   isOfficer      — boolean — shows officer actions instead of enroll button
+//   enrolling      — boolean — disables enroll button while request is in flight
+//   onDelete       — function() — officer deletes this training
+//   onMarkComplete — function() — officer marks this training as completed
 // =============================================================
 
-import { FaCalendarAlt, FaMapMarkerAlt, FaClock, FaUserTie, FaUsers } from "react-icons/fa"
+import { FaCalendarAlt, FaMapMarkerAlt, FaClock, FaUserTie, FaUsers, FaTrash, FaCheckCircle } from "react-icons/fa"
 
-function TrainingCard({ training, enrolled = false, onEnroll, isOfficer = false, enrolling = false }) {
+function TrainingCard({ training, enrolled = false, onEnroll, isOfficer = false, enrolling = false, onDelete, onMarkComplete }) {
 
   const isUpcoming = training.status === "UPCOMING"
 
@@ -78,7 +77,31 @@ function TrainingCard({ training, enrolled = false, onEnroll, isOfficer = false,
           )}
         </div>
 
-        {/* Enroll button — only for farmers, only for upcoming trainings */}
+        {/* Officer actions */}
+        {isOfficer && (
+          <div className="flex gap-2 mt-2">
+            {isUpcoming && onMarkComplete && (
+              <button
+                onClick={onMarkComplete}
+                className="flex items-center gap-1.5 text-xs font-bold text-green-700 hover:text-green-900 border border-green-200 hover:border-green-400 rounded-lg px-3 py-1.5 transition"
+              >
+                <FaCheckCircle className="text-xs" />
+                Mark Complete
+              </button>
+            )}
+            {onDelete && (
+              <button
+                onClick={onDelete}
+                className="flex items-center gap-1.5 text-xs font-bold text-red-600 hover:text-red-800 border border-red-200 hover:border-red-400 rounded-lg px-3 py-1.5 transition"
+              >
+                <FaTrash className="text-xs" />
+                Delete
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Farmer enroll button */}
         {!isOfficer && (
           enrolled ? (
             <div className="w-full text-center py-2.5 bg-green-100 text-green-700 rounded-xl text-sm font-bold">

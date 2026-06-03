@@ -48,5 +48,13 @@ public class Tool {
     @Getter @Setter
     private String addedBy;
 
+    // Brand or manufacturer name (e.g. "Mahindra", "John Deere")
+    @Getter @Setter
+    private String brand;
+
+    // External buy/source link (e.g. Amazon, Flipkart, official site)
+    @Getter @Setter
+    private String sourceUrl;
+
     public Tool() {}
 }

@@ -35,4 +35,9 @@ public class ExpertSolutionController {
     public void deleteSolution(@PathVariable Long id) {
         expertSolutionService.deleteSolution(id);
     }
+
+    @PutMapping("/{id}")
+    public ExpertSolution updateSolution(@PathVariable Long id, @RequestBody ExpertSolution solution) {
+        return expertSolutionService.updateSolution(id, solution);
+    }
 }

@@ -6,7 +6,7 @@ import EmptyState       from "../../components/EmptyState"
 
 import { getAllAwarenessDrives } from "../../services/awarenessService"
 
-import { FaBullhorn, FaRupeeSign, FaShieldAlt, FaLeaf } from "react-icons/fa"
+import { FaBullhorn, FaRupeeSign, FaShieldAlt, FaLeaf, FaChevronDown, FaChevronUp } from "react-icons/fa"
 
 const categoryStyle = {
   Scheme: { bg: "bg-gradient-to-br from-green-600 to-green-500",   tag: "bg-green-100 text-green-700"  },
@@ -23,8 +23,12 @@ const categoryIcon = {
 
 function Awareness() {
 
-  const [drives, setDrives]     = useState([])
-  const [fetching, setFetching] = useState(true)
+  const [drives, setDrives]       = useState([])
+  const [fetching, setFetching]   = useState(true)
+  const [expanded, setExpanded]   = useState({})
+
+  const toggleExpand = (id) =>
+    setExpanded((prev) => ({ ...prev, [id]: !prev[id] }))
 
   useEffect(() => {
     const load = async () => {
@@ -82,6 +86,8 @@ function Awareness() {
               {drives.map((drive) => {
                 const style = categoryStyle[drive.category] || defaultStyle
                 const icon  = categoryIcon[drive.category] || <FaBullhorn />
+                const isExpanded = !!expanded[drive.id]
+                const longDesc = drive.description && drive.description.length > 160
                 return (
                   <div key={drive.id} className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow">
 
@@ -100,7 +106,21 @@ function Awareness() {
                     )}
 
                     <div className="p-5">
-                      <p className="text-sm text-gray-600 leading-relaxed">{drive.description}</p>
+                      <p className="text-sm text-gray-600 leading-relaxed">
+                        {longDesc && !isExpanded
+                          ? drive.description.slice(0, 160) + "…"
+                          : drive.description}
+                      </p>
+
+                      {longDesc && (
+                        <button
+                          onClick={() => toggleExpand(drive.id)}
+                          className="mt-2 flex items-center gap-1 text-xs font-semibold text-green-700 hover:text-green-900 transition"
+                        >
+                          {isExpanded ? <><FaChevronUp className="text-xs" /> Show Less</> : <><FaChevronDown className="text-xs" /> Read More</>}
+                        </button>
+                      )}
+
                       {drive.publishedBy && (
                         <p className="text-xs text-gray-400 mt-3">
                           By <span className="font-semibold text-gray-500">{drive.publishedBy}</span>

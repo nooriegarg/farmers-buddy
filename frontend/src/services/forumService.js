@@ -41,3 +41,6 @@ export const getAllForumPosts =
 
     return response.data
 }
+
+export const deleteForumPost = (id) =>
+  API.delete(`/forum/${id}`).then((res) => res.data)

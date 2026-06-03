@@ -100,4 +100,13 @@ public class QueryController {
         // Persist the updated query back to MySQL
         return queryService.saveQuery(query);
     }
+
+    // -------------------------
+    // DELETE /api/queries/{id}
+    // -------------------------
+    // Farmer deletes their own query.
+    @DeleteMapping("/{id}")
+    public void deleteQuery(@PathVariable Long id) {
+        queryService.deleteQuery(id);
+    }
 }

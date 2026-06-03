@@ -14,6 +14,8 @@ import {
   FaUsers,
   FaRupeeSign,
   FaUserCircle,
+  FaCalendarAlt,
+  FaLightbulb,
 } from "react-icons/fa"
 
 const navItems = [
@@ -22,6 +24,8 @@ const navItems = [
   { label: "Platform Awareness", icon: <FaBullhorn />,      path: "/admin/awareness"   },
   { label: "Resource Management",icon: <FaBoxOpen />,       path: "/admin/tools"       },
   { label: "Mandi Prices",       icon: <FaRupeeSign />,     path: "/admin/mandi"       },
+  { label: "Trainings",          icon: <FaCalendarAlt />,   path: "/admin/trainings"   },
+  { label: "Expert Solutions",   icon: <FaLightbulb />,     path: "/admin/solutions"   },
   { label: "User Management",    icon: <FaUsers />,         path: "/admin/users"       },
   { label: "My Profile",         icon: <FaUserCircle />,    path: "/admin/profile"     },
 ]

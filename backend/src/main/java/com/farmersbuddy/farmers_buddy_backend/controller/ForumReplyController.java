@@ -66,4 +66,13 @@ public class ForumReplyController {
         return forumReplyService
                 .getRepliesByPostId(postId);
     }
+
+    // -------------------------
+    // DELETE /api/forum-replies/{id}
+    // -------------------------
+    // Deletes a reply by ID (author or admin action).
+    @DeleteMapping("/{id}")
+    public void deleteReply(@PathVariable Long id) {
+        forumReplyService.deleteReply(id);
+    }
 }

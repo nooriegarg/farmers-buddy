@@ -9,8 +9,8 @@ import ForumPostCard  from "../../components/ForumPostCard"
 import EmptyState     from "../../components/EmptyState"
 import LoadingSpinner from "../../components/LoadingSpinner"
 
-import { createForumPost, getAllForumPosts } from "../../services/forumService"
-import { createReply, getRepliesByPostId }   from "../../services/forumReplyService"
+import { createForumPost, getAllForumPosts, deleteForumPost } from "../../services/forumService"
+import { createReply, getRepliesByPostId, deleteForumReply }   from "../../services/forumReplyService"
 
 import { FaComments, FaPaperPlane } from "react-icons/fa"
 
@@ -85,6 +85,32 @@ function Forum() {
     } catch (error) {
       console.error(error)
       toast.error("Failed to reply ❌")
+    }
+  }
+
+  const handleDeletePost = async (postId) => {
+    if (!window.confirm("Delete this post? This cannot be undone.")) return
+    try {
+      await deleteForumPost(postId)
+      toast.success("Post deleted ✅")
+      setPosts(posts.filter((p) => p.id !== postId))
+    } catch (error) {
+      console.error(error)
+      toast.error("Failed to delete post ❌")
+    }
+  }
+
+  const handleDeleteReply = async (postId, replyId) => {
+    try {
+      await deleteForumReply(replyId)
+      toast.success("Reply deleted ✅")
+      setReplies((prev) => ({
+        ...prev,
+        [postId]: (prev[postId] || []).filter((r) => r.id !== replyId),
+      }))
+    } catch (error) {
+      console.error(error)
+      toast.error("Failed to delete reply ❌")
     }
   }
 
@@ -182,6 +208,9 @@ function Forum() {
                       setReplyText({ ...replyText, [item.id]: text })
                     }
                     onReply={() => handleReply(item.id)}
+                    currentUser={user}
+                    onDeletePost={() => handleDeletePost(item.id)}
+                    onDeleteReply={(replyId) => handleDeleteReply(item.id, replyId)}
                   />
                 ))}
               </div>

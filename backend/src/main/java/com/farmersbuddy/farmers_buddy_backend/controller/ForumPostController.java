@@ -60,4 +60,13 @@ public class ForumPostController {
 
         return forumPostService.getAllPosts();
     }
+
+    // -------------------------
+    // DELETE /api/forum/{id}
+    // -------------------------
+    // Deletes a forum post by ID (author or admin action).
+    @DeleteMapping("/{id}")
+    public void deletePost(@PathVariable Long id) {
+        forumPostService.deletePost(id);
+    }
 }

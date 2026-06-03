@@ -1,19 +1,17 @@
 // =============================================================
 // QueryCard.jsx — Reusable Query Display Card
 // =============================================================
-// Used in both FarmerDashboard (read-only) and OfficerDashboard
-// (with reply form). The reply form only appears when the
-// `onReply` prop is provided and the query has no officer reply yet.
-//
 // Props:
 //   query          — Query object { id, title, description, status, farmerName, officerReply }
 //   showFarmerName — boolean: show farmer name badge (Officer view)
 //   replyText      — current reply text for this query (Officer view)
 //   onReplyChange  — function(text) — called when reply textarea changes
 //   onReply        — function() — called when Submit Reply is clicked
+//   onDelete       — function() — called to delete the query (Farmer view)
 //   accentColor    — "green" | "blue" (default: "green")
 // =============================================================
 
+import { FaTrash } from "react-icons/fa"
 import { motion } from "framer-motion"
 
 function QueryCard({
@@ -22,6 +20,7 @@ function QueryCard({
   replyText = "",
   onReplyChange,
   onReply,
+  onDelete,
   accentColor = "green",
 }) {
 
@@ -44,7 +43,7 @@ function QueryCard({
       className="bg-white rounded-2xl shadow-md p-6 border border-gray-100 hover:shadow-lg transition-shadow duration-200"
     >
 
-      {/* ---- Header row: title + badges ---- */}
+      {/* ---- Header row: title + badges + delete ---- */}
       <div className="flex flex-wrap items-start justify-between gap-3">
 
         <h3 className={`text-xl font-bold ${titleColor} leading-snug`}>
@@ -70,6 +69,17 @@ function QueryCard({
           >
             {query.status === "RESOLVED" ? "✅ Resolved" : "⏳ Pending"}
           </span>
+
+          {/* Delete button (Farmer view only) */}
+          {onDelete && (
+            <button
+              onClick={onDelete}
+              className="text-gray-400 hover:text-red-500 transition p-1.5 rounded-lg hover:bg-red-50"
+              title="Delete query"
+            >
+              <FaTrash className="text-xs" />
+            </button>
+          )}
 
         </div>
       </div>

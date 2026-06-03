@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 
-import OfficerSidebar from "../../components/OfficerSidebar"
+import AdminSidebar   from "../../components/AdminSidebar"
 import LoadingSpinner from "../../components/LoadingSpinner"
 import EmptyState     from "../../components/EmptyState"
 
 import {
-  createTraining,
   getAllTrainings,
   deleteTraining,
   markTrainingCompleted,
@@ -14,27 +13,17 @@ import {
 } from "../../services/trainingService"
 
 import {
-  FaCalendarAlt, FaPlus, FaMapMarkerAlt, FaClock, FaUserTie,
+  FaCalendarAlt, FaMapMarkerAlt, FaClock, FaUserTie,
   FaUsers, FaTrash, FaCheckCircle, FaChevronDown, FaChevronUp,
 } from "react-icons/fa"
 
-function OfficerTrainings() {
-
-  const user = JSON.parse(localStorage.getItem("user"))
+function AdminTrainings() {
 
   const [trainings, setTrainings]         = useState([])
   const [fetching, setFetching]           = useState(true)
-  const [posting, setPosting]             = useState(false)
-  const [showForm, setShowForm]           = useState(false)
-  const [enrollments, setEnrollments]     = useState({})
-  const [showEnroll, setShowEnroll]       = useState({})
-  const [loadingEnroll, setLoadingEnroll] = useState({})
-
-  const [form, setForm] = useState({
-    title: "", description: "", location: "",
-    date: "", time: "", officerName: user?.name || "",
-    maxParticipants: "", status: "UPCOMING"
-  })
+  const [enrollments, setEnrollments]     = useState({})   // { trainingId: [...] }
+  const [showEnroll, setShowEnroll]       = useState({})   // { trainingId: bool }
+  const [loadingEnroll, setLoadingEnroll] = useState({})   // { trainingId: bool }
 
   useEffect(() => {
     getAllTrainings()
@@ -42,27 +31,6 @@ function OfficerTrainings() {
       .catch(console.error)
       .finally(() => setFetching(false))
   }, [])
-
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
-
-  const handleCreate = async (e) => {
-    e.preventDefault()
-    if (!form.title.trim() || !form.date.trim()) return
-    setPosting(true)
-    try {
-      await createTraining({ ...form, maxParticipants: Number(form.maxParticipants) || 0 })
-      toast.success("Training session created ✅")
-      const updated = await getAllTrainings()
-      setTrainings(updated)
-      setForm({ title: "", description: "", location: "", date: "", time: "", officerName: user?.name || "", maxParticipants: "", status: "UPCOMING" })
-      setShowForm(false)
-    } catch (err) {
-      console.error(err)
-      toast.error("Failed to create training ❌")
-    } finally {
-      setPosting(false)
-    }
-  }
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this training session? This cannot be undone.")) return
@@ -72,7 +40,7 @@ function OfficerTrainings() {
       setTrainings(trainings.filter((t) => t.id !== id))
     } catch (err) {
       console.error(err)
-      toast.error("Failed to delete training ❌")
+      toast.error("Failed to delete ❌")
     }
   }
 
@@ -80,16 +48,18 @@ function OfficerTrainings() {
     try {
       const updated = await markTrainingCompleted(id)
       setTrainings(trainings.map((t) => (t.id === id ? updated : t)))
-      toast.success("Training marked as completed ✅")
+      toast.success("Marked as completed ✅")
     } catch (err) {
       console.error(err)
-      toast.error("Failed to update training ❌")
+      toast.error("Failed to update ❌")
     }
   }
 
   const toggleEnrollments = async (id) => {
     const nowOpen = !showEnroll[id]
     setShowEnroll((prev) => ({ ...prev, [id]: nowOpen }))
+
+    // Only fetch once
     if (nowOpen && !enrollments[id]) {
       setLoadingEnroll((prev) => ({ ...prev, [id]: true }))
       try {
@@ -107,105 +77,30 @@ function OfficerTrainings() {
   return (
     <div className="min-h-screen bg-gray-50 flex">
 
-      <OfficerSidebar />
+      <AdminSidebar />
 
       <div className="flex-1 flex flex-col">
 
         <div
           className="relative px-10 py-10 overflow-hidden"
-          style={{ background: "linear-gradient(135deg, #1e3a5f 0%, #1d4ed8 50%, #2563eb 100%)" }}
+          style={{ background: "linear-gradient(135deg, #7f1d1d 0%, #b91c1c 50%, #dc2626 100%)" }}
         >
           <div className="absolute -top-10 -right-10 w-48 h-48 bg-white/5 rounded-full" />
           <div className="relative z-10">
-            <p className="text-blue-300 text-sm font-medium mb-1">Officer Panel</p>
+            <p className="text-red-300 text-sm font-medium mb-1">Admin Panel</p>
             <h1 className="text-3xl font-extrabold text-white">Training Sessions 📅</h1>
-            <p className="text-blue-200 text-sm mt-1">
-              Create and manage agriculture training sessions for farmers.
+            <p className="text-red-200 text-sm mt-1">
+              View, manage, and moderate all training sessions on the platform.
             </p>
           </div>
         </div>
 
         <div className="flex-1 p-8 space-y-6">
 
-          <div>
-            <button
-              onClick={() => setShowForm(!showForm)}
-              className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-700 to-blue-600 hover:from-blue-800 text-white rounded-xl text-sm font-bold transition shadow-md"
-            >
-              <FaPlus className="text-xs" />
-              {showForm ? "Cancel" : "Create New Training"}
-            </button>
-
-            {showForm && (
-              <form onSubmit={handleCreate} className="mt-4 bg-white rounded-2xl shadow-md border border-gray-100 p-6 space-y-4 max-w-2xl">
-
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="bg-blue-100 p-2.5 rounded-xl">
-                    <FaCalendarAlt className="text-blue-700 text-lg" />
-                  </div>
-                  <h2 className="text-lg font-bold text-gray-800">New Training Session</h2>
-                </div>
-
-                <input
-                  type="text" name="title" placeholder="Training title"
-                  value={form.title} onChange={handleChange} required
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
-                />
-
-                <textarea
-                  name="description" rows="3" placeholder="Describe what will be covered..."
-                  value={form.description} onChange={handleChange}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 resize-none"
-                />
-
-                <div className="flex gap-3">
-                  <input
-                    type="text" name="location" placeholder="Location (e.g. Krishi Bhavan, Delhi)"
-                    value={form.location} onChange={handleChange}
-                    className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
-                  />
-                  <input
-                    type="text" name="maxParticipants" placeholder="Max participants"
-                    value={form.maxParticipants} onChange={handleChange}
-                    className="w-36 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
-                  />
-                </div>
-
-                <div className="flex gap-3">
-                  <div className="flex-1">
-                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">Date</label>
-                    <input
-                      type="date" name="date"
-                      value={form.date} onChange={handleChange} required
-                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">Time</label>
-                    <input
-                      type="time" name="time"
-                      value={form.time} onChange={handleChange}
-                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
-                    />
-                  </div>
-                </div>
-
-                <button
-                  type="submit" disabled={posting}
-                  className={`px-6 py-2.5 rounded-xl font-bold text-white text-sm transition shadow-md ${
-                    posting ? "bg-gray-400 cursor-not-allowed" : "bg-gradient-to-r from-blue-700 to-blue-600 hover:from-blue-800"
-                  }`}
-                >
-                  {posting ? "Creating..." : "Create Training"}
-                </button>
-              </form>
-            )}
-          </div>
-
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-gray-800">All Training Sessions</h2>
             {!fetching && (
-              <span className="text-xs bg-blue-100 text-blue-700 font-semibold px-3 py-1 rounded-full">
+              <span className="text-xs bg-red-100 text-red-700 font-semibold px-3 py-1 rounded-full">
                 {trainings.length} sessions
               </span>
             )}
@@ -214,15 +109,11 @@ function OfficerTrainings() {
           {fetching ? (
             <LoadingSpinner message="Loading training sessions..." />
           ) : trainings.length === 0 ? (
-            <EmptyState
-              icon="📅"
-              message="No training sessions yet"
-              subtext="Create a training session using the button above"
-            />
+            <EmptyState icon="📅" message="No training sessions yet" subtext="Officers create training sessions on their dashboard" />
           ) : (
             <div className="grid md:grid-cols-2 gap-5">
               {trainings.map((training) => {
-                const isUpcoming = training.status === "UPCOMING" || !training.status
+                const isUpcoming = training.status === "UPCOMING"
                 const enrolled   = enrollments[training.id] || []
                 const isOpen     = !!showEnroll[training.id]
                 const loading    = !!loadingEnroll[training.id]
@@ -230,6 +121,7 @@ function OfficerTrainings() {
                 return (
                   <div key={training.id} className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow">
 
+                    {/* Header */}
                     <div className="bg-gradient-to-r from-blue-700 to-blue-600 px-5 py-4">
                       <div className="flex items-start justify-between gap-2">
                         <h3 className="text-white font-bold text-base leading-tight">{training.title}</h3>
@@ -244,6 +136,7 @@ function OfficerTrainings() {
                       </p>
                     </div>
 
+                    {/* Body */}
                     <div className="p-5">
                       {training.description && (
                         <p className="text-gray-500 text-sm mb-4 leading-relaxed">{training.description}</p>
@@ -276,6 +169,7 @@ function OfficerTrainings() {
                         )}
                       </div>
 
+                      {/* Admin actions */}
                       <div className="flex flex-wrap gap-2">
                         {isUpcoming && (
                           <button
@@ -301,6 +195,7 @@ function OfficerTrainings() {
                         </button>
                       </div>
 
+                      {/* Enrollment list */}
                       {isOpen && (
                         <div className="mt-4 bg-blue-50 border border-blue-100 rounded-xl p-4">
                           <p className="text-xs font-bold text-blue-700 uppercase tracking-wide mb-3">
@@ -330,11 +225,10 @@ function OfficerTrainings() {
               })}
             </div>
           )}
-
         </div>
       </div>
     </div>
   )
 }
 
-export default OfficerTrainings
+export default AdminTrainings

@@ -21,7 +21,8 @@ function ExpertTools() {
 
   const [form, setForm] = useState({
     name: "", category: "Cultivation", description: "",
-    imageUrl: "", price: "", addedBy: user?.name || ""
+    imageUrl: "", price: "", addedBy: user?.name || "",
+    brand: "", sourceUrl: ""
   })
 
   // Load all tools then filter to just this expert's uploads
@@ -50,7 +51,7 @@ function ExpertTools() {
       toast.success("Tool uploaded ✅")
       const updated = await getAllTools()
       setMyTools(updated.filter((t) => t.addedBy === user.name))
-      setForm({ name: "", category: "Cultivation", description: "", imageUrl: "", price: "", addedBy: user?.name || "" })
+      setForm({ name: "", category: "Cultivation", description: "", imageUrl: "", price: "", addedBy: user?.name || "", brand: "", sourceUrl: "" })
       setShowForm(false)
     } catch (err) {
       console.error(err)
@@ -148,8 +149,21 @@ function ExpertTools() {
                     className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 bg-gray-50"
                   />
                   <input
+                    type="text" name="brand" placeholder="Brand (e.g. Mahindra)"
+                    value={form.brand} onChange={handleChange}
+                    className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 bg-gray-50"
+                  />
+                </div>
+
+                <div className="flex gap-3">
+                  <input
                     type="text" name="imageUrl" placeholder="Image URL (optional)"
                     value={form.imageUrl} onChange={handleChange}
+                    className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 bg-gray-50"
+                  />
+                  <input
+                    type="text" name="sourceUrl" placeholder="Buy link (optional)"
+                    value={form.sourceUrl} onChange={handleChange}
                     className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 bg-gray-50"
                   />
                 </div>

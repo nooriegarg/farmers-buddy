@@ -43,3 +43,6 @@ export const getRepliesByPostId =
 
     return response.data
 }
+
+export const deleteForumReply = (id) =>
+  API.delete(`/forum-replies/${id}`).then((res) => res.data)

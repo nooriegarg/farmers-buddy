@@ -17,7 +17,7 @@ import QueryCard     from "../../components/QueryCard"
 import LoadingSpinner from "../../components/LoadingSpinner"
 import EmptyState    from "../../components/EmptyState"
 
-import { createQuery, getQueriesByFarmer } from "../../services/queryService"
+import { createQuery, getQueriesByFarmer, deleteQuery } from "../../services/queryService"
 
 import {
   FaCheckCircle,
@@ -78,6 +78,18 @@ function FarmerDashboard() {
       toast.error("Failed To Submit Query ❌")
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleDeleteQuery = async (id) => {
+    if (!window.confirm("Delete this query?")) return
+    try {
+      await deleteQuery(id)
+      toast.success("Query deleted ✅")
+      setQueries(queries.filter((q) => q.id !== id))
+    } catch (error) {
+      console.error(error)
+      toast.error("Failed to delete query ❌")
     }
   }
 
@@ -219,6 +231,7 @@ function FarmerDashboard() {
                     key={query.id}
                     query={query}
                     accentColor="green"
+                    onDelete={() => handleDeleteQuery(query.id)}
                   />
                 ))}
               </div>

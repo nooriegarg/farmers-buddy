@@ -11,3 +11,6 @@ export const getMySolutions = (expertId) =>
 
 export const deleteSolution = (id) =>
   API.delete(`/solutions/${id}`).then((res) => res.data)
+
+export const updateSolution = (id, data) =>
+  API.put(`/solutions/${id}`, data).then((res) => res.data)

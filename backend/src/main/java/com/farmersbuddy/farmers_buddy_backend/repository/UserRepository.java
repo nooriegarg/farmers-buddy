@@ -29,4 +29,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Custom derived query — finds a user by their email address.
     // Returns Optional<User> to safely handle cases where no user is found.
     Optional<User> findByEmail(String email);
+
+    // Finds all users with a specific role — used to fan-out notifications.
+    // Spring Data JPA generates: SELECT * FROM users WHERE role = ?
+    java.util.List<User> findByRole(String role);
 }

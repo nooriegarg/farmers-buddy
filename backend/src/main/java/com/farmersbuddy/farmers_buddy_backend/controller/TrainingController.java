@@ -79,4 +79,22 @@ public class TrainingController {
     public List<TrainingEnrollment> getTrainingEnrollments(@PathVariable Long trainingId) {
         return trainingService.getEnrollmentsByTraining(trainingId);
     }
+
+    // -------------------------
+    // DELETE /api/trainings/{id}
+    // -------------------------
+    // Officer deletes a training session they created.
+    @DeleteMapping("/{id}")
+    public void deleteTraining(@PathVariable Long id) {
+        trainingService.deleteTraining(id);
+    }
+
+    // -------------------------
+    // PUT /api/trainings/{id}/complete
+    // -------------------------
+    // Officer marks a training session as COMPLETED.
+    @PutMapping("/{id}/complete")
+    public Training markCompleted(@PathVariable Long id) {
+        return trainingService.markCompleted(id);
+    }
 }

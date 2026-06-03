@@ -27,12 +27,14 @@ import OfficerTrainings       from "./pages/officer/OfficerTrainings"
 import OfficerAwareness       from "./pages/officer/OfficerAwareness"
 
 // Admin pages
-import AdminDashboard from "./pages/admin/AdminDashboard"
-import AdminForum     from "./pages/admin/AdminForum"
-import AdminAwareness from "./pages/admin/AdminAwareness"
-import AdminTools     from "./pages/admin/AdminTools"
-import AdminMandi     from "./pages/admin/AdminMandi"
-import AdminUsers     from "./pages/admin/AdminUsers"
+import AdminDashboard  from "./pages/admin/AdminDashboard"
+import AdminForum      from "./pages/admin/AdminForum"
+import AdminAwareness  from "./pages/admin/AdminAwareness"
+import AdminTools      from "./pages/admin/AdminTools"
+import AdminMandi      from "./pages/admin/AdminMandi"
+import AdminUsers      from "./pages/admin/AdminUsers"
+import AdminTrainings  from "./pages/admin/AdminTrainings"
+import AdminSolutions  from "./pages/admin/AdminSolutions"
 
 // Expert pages
 import ExpertDashboard from "./pages/expert/ExpertDashboard"
@@ -90,8 +92,10 @@ function App() {
         <Route path="/admin/awareness" element={<ProtectedRoute allowedRoles={["ADMIN"]}><AdminAwareness /></ProtectedRoute>} />
         <Route path="/admin/tools"     element={<ProtectedRoute allowedRoles={["ADMIN"]}><AdminTools /></ProtectedRoute>} />
         <Route path="/admin/mandi"     element={<ProtectedRoute allowedRoles={["ADMIN"]}><AdminMandi /></ProtectedRoute>} />
-        <Route path="/admin/users"     element={<ProtectedRoute allowedRoles={["ADMIN"]}><AdminUsers /></ProtectedRoute>} />
-        <Route path="/admin/profile"   element={<ProtectedRoute allowedRoles={["ADMIN"]}><Profile /></ProtectedRoute>} />
+        <Route path="/admin/users"      element={<ProtectedRoute allowedRoles={["ADMIN"]}><AdminUsers /></ProtectedRoute>} />
+        <Route path="/admin/trainings"  element={<ProtectedRoute allowedRoles={["ADMIN"]}><AdminTrainings /></ProtectedRoute>} />
+        <Route path="/admin/solutions"  element={<ProtectedRoute allowedRoles={["ADMIN"]}><AdminSolutions /></ProtectedRoute>} />
+        <Route path="/admin/profile"    element={<ProtectedRoute allowedRoles={["ADMIN"]}><Profile /></ProtectedRoute>} />
 
         {/* ----------------------------- */}
         {/* Expert Routes — /expert/*     */}

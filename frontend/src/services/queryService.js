@@ -60,3 +60,6 @@ export const getQueriesByFarmer = async (farmerId) => {
 
   return response.data
 }
+
+export const deleteQuery = (id) =>
+  API.delete(`/queries/${id}`).then((res) => res.data)

@@ -17,24 +17,34 @@ import java.util.List;
 // Sits between TrainingController and the repositories.
 //
 // Architecture: TrainingController → TrainingService → Repositories → MySQL
+//
+// Notifications:
+//   createTraining → notifies all FARMER users automatically
 // =============================================================
 
 @Service
 public class TrainingService {
 
-    // Injected repositories for training and enrollment DB access
     @Autowired
     private TrainingRepository trainingRepository;
 
     @Autowired
     private TrainingEnrollmentRepository enrollmentRepository;
 
+    // Injected to auto-generate notifications on key events
+    @Autowired
+    private NotificationService notificationService;
+
     // -------------------------
     // Create a new training session (officer action)
     // -------------------------
+    // After saving, notifies all farmers so they know a new session is available.
     public Training createTraining(Training training) {
-        // Default status is "UPCOMING" (set in entity constructor)
-        return trainingRepository.save(training);
+        Training saved = trainingRepository.save(training);
+        notificationService.notifyAllFarmers(
+            "New training session available: \"" + saved.getTitle() + "\" — check the Trainings page to enroll."
+        );
+        return saved;
     }
 
     // -------------------------
@@ -48,7 +58,6 @@ public class TrainingService {
     // Enroll a farmer into a training (farmer action)
     // -------------------------
     public TrainingEnrollment enrollFarmer(TrainingEnrollment enrollment) {
-        // Default status is "PENDING" (set in entity constructor)
         return enrollmentRepository.save(enrollment);
     }
 
@@ -64,5 +73,22 @@ public class TrainingService {
     // -------------------------
     public List<TrainingEnrollment> getEnrollmentsByTraining(Long trainingId) {
         return enrollmentRepository.findByTrainingId(trainingId);
+    }
+
+    // -------------------------
+    // Delete a training session (officer action)
+    // -------------------------
+    public void deleteTraining(Long id) {
+        trainingRepository.deleteById(id);
+    }
+
+    // -------------------------
+    // Mark training as COMPLETED (officer action)
+    // -------------------------
+    public Training markCompleted(Long id) {
+        Training training = trainingRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Training not found"));
+        training.setStatus("COMPLETED");
+        return trainingRepository.save(training);
     }
 }
