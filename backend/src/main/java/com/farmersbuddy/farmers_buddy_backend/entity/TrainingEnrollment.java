@@ -11,7 +11,7 @@ import lombok.Setter;
 // Links a farmer (by farmerId) to a training (by trainingId).
 //
 // Created when a farmer clicks "Join Training" on the frontend.
-// Status: "PENDING" (auto-set on enrollment)
+// Status: "ENROLLED" (auto-set on enrollment)
 // =============================================================
 
 @Entity
@@ -40,6 +40,6 @@ public class TrainingEnrollment {
     private String status;
 
     public TrainingEnrollment() {
-        this.status = "PENDING";
+        this.status = "ENROLLED";
     }
 }

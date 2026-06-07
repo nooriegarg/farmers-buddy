@@ -5,6 +5,7 @@ import com.farmersbuddy.farmers_buddy_backend.entity.User;
 import com.farmersbuddy.farmers_buddy_backend.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.farmersbuddy.farmers_buddy_backend.dto.LoginRequest;
 
@@ -18,16 +19,14 @@ import java.util.regex.Pattern;
 // Handles the core authentication logic for registration and login.
 // Sits between the AuthController (API layer) and UserRepository (DB layer).
 //
-// @Service: marks this class as a Spring-managed service bean.
-// @Autowired: injects the UserRepository dependency automatically.
+// Password Security:
+//   - Passwords are hashed with BCrypt during registration
+//   - BCrypt.matches() is used during login to verify the plain-text
+//     input against the stored hash
+//   - Raw passwords are NEVER stored in the database
 //
 // Architecture Position:
 //   AuthController → AuthService → UserRepository → MySQL
-//
-// Viva Tip:
-//   The Service layer separates business logic from the controller
-//   (which only handles HTTP) and the repository (which only handles DB).
-//   This is the "S" in the layered architecture.
 // =============================================================
 
 @Service
@@ -41,14 +40,15 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
 
+    // Injected BCryptPasswordEncoder bean from SecurityConfig
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     // =========================================================
     // Register a New User
     // =========================================================
-    // Validates that the email is not already registered,
-    // maps the RegisterRequest DTO to a User entity, and saves it.
-    //
-    // Throws RuntimeException if the email already exists —
-    // the controller returns this as an error response to the frontend.
+    // Validates email and password, checks for duplicate email,
+    // hashes the password with BCrypt, then saves the user.
     public User register(RegisterRequest request) {
 
         // Validate email format
@@ -70,16 +70,15 @@ public class AuthService {
         userRepository.findByEmail(request.getEmail());
 
         if (existingUser.isPresent()) {
-
             throw new RuntimeException("User already exists");
         }
 
         // Map the DTO fields to a new User entity
         User user = new User();
-
         user.setName(request.getName());
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
+        // Hash the password before storing — never store plain text
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(request.getRole());
 
         // Persist the new user to MySQL and return the saved entity (with generated ID)
@@ -90,34 +89,45 @@ public class AuthService {
     // Login an Existing User
     // =========================================================
     // Looks up the user by email, then verifies the password.
-    // Returns the User object on success, or null on failure.
-    //
-    // The returned User object (including role) is sent back to the
-    // React frontend, which stores it in localStorage for session management.
+    // Supports both BCrypt-hashed passwords (new accounts) and
+    // plain-text passwords (accounts created before hashing was added).
+    // On a successful plain-text match, the password is silently
+    // re-hashed and saved — so the account migrates automatically.
     public User login(LoginRequest request) {
 
-        // Find user by email — returns empty Optional if not found
         Optional<User> optionalUser =
                 userRepository.findByEmail(request.getEmail());
 
         if (optionalUser.isPresent()) {
 
             User user = optionalUser.get();
+            String stored = user.getPassword();
 
-            // Direct password comparison (plain text — current implementation)
-            if (user.getPassword().equals(request.getPassword())) {
-                return user;
+            // BCrypt hashes always start with "$2a$" or "$2b$"
+            boolean isHashed = stored != null && stored.startsWith("$2");
+
+            if (isHashed) {
+                // Normal path: verify against BCrypt hash
+                if (passwordEncoder.matches(request.getPassword(), stored)) {
+                    return user;
+                }
+            } else {
+                // Legacy path: plain-text password in DB
+                if (stored != null && stored.equals(request.getPassword())) {
+                    // Migrate: re-hash and save so future logins use BCrypt
+                    user.setPassword(passwordEncoder.encode(request.getPassword()));
+                    userRepository.save(user);
+                    return user;
+                }
             }
         }
 
-        // Return null if email not found or password does not match
         return null;
     }
 
     // =========================================================
     // Get All Users
     // =========================================================
-    // Returns all registered users — used by the Admin panel.
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -125,7 +135,6 @@ public class AuthService {
     // =========================================================
     // Get User By ID
     // =========================================================
-    // Returns a single user by ID — used by the Profile page.
     public User getById(Long id) {
         return userRepository.findById(id).orElse(null);
     }
@@ -152,7 +161,6 @@ public class AuthService {
     // =========================================================
     // Delete User Account
     // =========================================================
-    // Permanently removes a user from the database by ID.
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }

@@ -11,6 +11,7 @@ import Register from "./pages/shared/Register"
 
 // Farmer pages
 import FarmerDashboard       from "./pages/farmer/FarmerDashboard"
+import MyQueries             from "./pages/farmer/MyQueries"
 import Recommendations       from "./pages/farmer/Recommendations"
 import SoilAnalysis          from "./pages/farmer/SoilAnalysis"
 import Trainings             from "./pages/farmer/Trainings"
@@ -40,6 +41,7 @@ import AdminSolutions  from "./pages/admin/AdminSolutions"
 import ExpertDashboard from "./pages/expert/ExpertDashboard"
 import ExpertSolutions from "./pages/expert/ExpertSolutions"
 import ExpertTools     from "./pages/expert/ExpertTools"
+import ExpertQueries   from "./pages/expert/ExpertQueries"
 
 // Shared pages
 import Profile from "./pages/shared/Profile"
@@ -64,6 +66,7 @@ function App() {
         {/* Farmer Routes — /farmer/*     */}
         {/* ----------------------------- */}
         <Route path="/farmer-dashboard" element={<ProtectedRoute allowedRoles={["FARMER"]}><FarmerDashboard /></ProtectedRoute>} />
+        <Route path="/farmer/queries"          element={<ProtectedRoute allowedRoles={["FARMER"]}><MyQueries /></ProtectedRoute>} />
         <Route path="/farmer/recommendations" element={<ProtectedRoute allowedRoles={["FARMER"]}><Recommendations /></ProtectedRoute>} />
         <Route path="/farmer/soil-analysis"   element={<ProtectedRoute allowedRoles={["FARMER"]}><SoilAnalysis /></ProtectedRoute>} />
         <Route path="/farmer/trainings"        element={<ProtectedRoute allowedRoles={["FARMER"]}><Trainings /></ProtectedRoute>} />
@@ -103,6 +106,7 @@ function App() {
         <Route path="/expert-dashboard" element={<ProtectedRoute allowedRoles={["EXPERT"]}><ExpertDashboard /></ProtectedRoute>} />
         <Route path="/expert/solutions" element={<ProtectedRoute allowedRoles={["EXPERT"]}><ExpertSolutions /></ProtectedRoute>} />
         <Route path="/expert/tools"     element={<ProtectedRoute allowedRoles={["EXPERT"]}><ExpertTools /></ProtectedRoute>} />
+        <Route path="/expert/queries"   element={<ProtectedRoute allowedRoles={["EXPERT"]}><ExpertQueries /></ProtectedRoute>} />
         <Route path="/expert/forum"     element={<ProtectedRoute allowedRoles={["EXPERT"]}><Forum /></ProtectedRoute>} />
         <Route path="/expert/profile"   element={<ProtectedRoute allowedRoles={["EXPERT"]}><Profile /></ProtectedRoute>} />
 

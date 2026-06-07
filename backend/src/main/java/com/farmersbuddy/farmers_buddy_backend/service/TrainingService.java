@@ -17,9 +17,6 @@ import java.util.List;
 // Sits between TrainingController and the repositories.
 //
 // Architecture: TrainingController → TrainingService → Repositories → MySQL
-//
-// Notifications:
-//   createTraining → notifies all FARMER users automatically
 // =============================================================
 
 @Service
@@ -31,20 +28,11 @@ public class TrainingService {
     @Autowired
     private TrainingEnrollmentRepository enrollmentRepository;
 
-    // Injected to auto-generate notifications on key events
-    @Autowired
-    private NotificationService notificationService;
-
     // -------------------------
     // Create a new training session (officer action)
     // -------------------------
-    // After saving, notifies all farmers so they know a new session is available.
     public Training createTraining(Training training) {
-        Training saved = trainingRepository.save(training);
-        notificationService.notifyAllFarmers(
-            "New training session available: \"" + saved.getTitle() + "\" — check the Trainings page to enroll."
-        );
-        return saved;
+        return trainingRepository.save(training);
     }
 
     // -------------------------

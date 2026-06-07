@@ -64,6 +64,11 @@ public class Query {
     @Setter
     private String officerReply;
 
+    // Expert's reply text — null until an expert responds
+    @Getter
+    @Setter
+    private String expertReply;
+
     // Query lifecycle status: "PENDING" → "RESOLVED"
     @Setter
     @Getter

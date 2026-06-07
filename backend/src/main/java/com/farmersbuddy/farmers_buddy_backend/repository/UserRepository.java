@@ -30,7 +30,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Returns Optional<User> to safely handle cases where no user is found.
     Optional<User> findByEmail(String email);
 
-    // Finds all users with a specific role — used to fan-out notifications.
+    // Finds all users with a specific role.
     // Spring Data JPA generates: SELECT * FROM users WHERE role = ?
     java.util.List<User> findByRole(String role);
 }

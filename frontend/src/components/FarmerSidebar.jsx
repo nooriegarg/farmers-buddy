@@ -18,20 +18,22 @@ import {
   FaRupeeSign,
   FaLightbulb,
   FaUserCircle,
+  FaQuestionCircle,
 } from "react-icons/fa"
 
 // Nav items: each has a label, icon, and target route
 const navItems = [
-  { label: "Dashboard",        icon: <FaTachometerAlt />, path: "/farmer-dashboard"        },
-  { label: "Recommendations",  icon: <FaSeedling />,      path: "/farmer/recommendations"  },
-  { label: "Soil Analysis",    icon: <FaFlask />,         path: "/farmer/soil-analysis"    },
-  { label: "Trainings",        icon: <FaCalendarAlt />,   path: "/farmer/trainings"        },
-  { label: "Mandi Prices",     icon: <FaRupeeSign />,     path: "/farmer/mandi"            },
-  { label: "Awareness Drives", icon: <FaBullhorn />,      path: "/farmer/awareness"        },
-  { label: "Expert Guidance",  icon: <FaLightbulb />,     path: "/farmer/expert-guidance"  },
-  { label: "Tools Catalog",    icon: <FaTools />,         path: "/farmer/tools"            },
-  { label: "Community Forum",  icon: <FaComments />,      path: "/farmer/forum"            },
-  { label: "My Profile",       icon: <FaUserCircle />,    path: "/farmer/profile"          },
+  { label: "Dashboard",        icon: <FaTachometerAlt />,   path: "/farmer-dashboard"        },
+  { label: "My Queries",       icon: <FaQuestionCircle />,  path: "/farmer/queries"          },
+  { label: "Recommendations",  icon: <FaSeedling />,        path: "/farmer/recommendations"  },
+  { label: "Soil Analysis",    icon: <FaFlask />,           path: "/farmer/soil-analysis"    },
+  { label: "Trainings",        icon: <FaCalendarAlt />,     path: "/farmer/trainings"        },
+  { label: "Mandi Prices",     icon: <FaRupeeSign />,       path: "/farmer/mandi"            },
+  { label: "Awareness Drives", icon: <FaBullhorn />,        path: "/farmer/awareness"        },
+  { label: "Expert Guidance",  icon: <FaLightbulb />,       path: "/farmer/expert-guidance"  },
+  { label: "Tools Catalog",    icon: <FaTools />,           path: "/farmer/tools"            },
+  { label: "Community Forum",  icon: <FaComments />,        path: "/farmer/forum"            },
+  { label: "My Profile",       icon: <FaUserCircle />,      path: "/farmer/profile"          },
 ]
 
 function FarmerSidebar() {

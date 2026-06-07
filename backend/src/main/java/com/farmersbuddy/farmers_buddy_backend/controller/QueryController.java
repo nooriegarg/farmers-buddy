@@ -85,19 +85,26 @@ public class QueryController {
             @RequestBody Query updatedQuery
     ) {
 
-        // Fetch the existing query from the database
-        Query query =
-                queryService.getQueryById(id);
-
-        // Update the officerReply field with the officer's response
-        query.setOfficerReply(
-                updatedQuery.getOfficerReply()
-        );
-
-        // Mark the query as resolved after the officer has replied
+        Query query = queryService.getQueryById(id);
+        query.setOfficerReply(updatedQuery.getOfficerReply());
         query.setStatus("RESOLVED");
+        return queryService.saveQuery(query);
+    }
 
-        // Persist the updated query back to MySQL
+    // -------------------------
+    // PUT /api/queries/{id}/expert-reply
+    // -------------------------
+    // Expert submits a reply to a specific query.
+    // Sets expertReply and marks as RESOLVED (if not already).
+    @PutMapping("/{id}/expert-reply")
+    public Query expertReplyToQuery(
+            @PathVariable Long id,
+            @RequestBody Query updatedQuery
+    ) {
+
+        Query query = queryService.getQueryById(id);
+        query.setExpertReply(updatedQuery.getExpertReply());
+        query.setStatus("RESOLVED");
         return queryService.saveQuery(query);
     }
 

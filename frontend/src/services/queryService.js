@@ -63,3 +63,11 @@ export const getQueriesByFarmer = async (farmerId) => {
 
 export const deleteQuery = (id) =>
   API.delete(`/queries/${id}`).then((res) => res.data)
+
+// -------------------------
+// Expert reply to a query
+// -------------------------
+// Expert submits guidance on a farmer query.
+// The backend updates the expertReply field and changes status to "RESOLVED".
+export const expertReplyToQuery = (id, replyData) =>
+  API.put(`/queries/${id}/expert-reply`, replyData).then((res) => res.data)

@@ -12,9 +12,6 @@ import java.util.List;
 // ExpertSolutionService.java — Business Logic for Expert Solutions
 // =============================================================
 // Handles CRUD for expert-posted farming solutions.
-//
-// Notifications:
-//   addSolution → notifies all FARMER users about the new guidance.
 // =============================================================
 
 @Service
@@ -23,20 +20,11 @@ public class ExpertSolutionService {
     @Autowired
     private ExpertSolutionRepository repository;
 
-    // Injected to auto-generate notifications when a solution is posted
-    @Autowired
-    private NotificationService notificationService;
-
     // -------------------------
     // Post a new solution (expert action)
     // -------------------------
-    // Notifies all farmers so they know new expert guidance is available.
     public ExpertSolution addSolution(ExpertSolution solution) {
-        ExpertSolution saved = repository.save(solution);
-        notificationService.notifyAllFarmers(
-            "New expert guidance posted: \"" + saved.getTitle() + "\" — check the Expert Guidance page."
-        );
-        return saved;
+        return repository.save(solution);
     }
 
     // -------------------------

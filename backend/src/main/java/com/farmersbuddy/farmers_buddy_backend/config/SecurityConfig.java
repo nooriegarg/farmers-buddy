@@ -3,6 +3,9 @@ package com.farmersbuddy.farmers_buddy_backend.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -26,16 +29,30 @@ import java.util.List;
 //   - CSRF is disabled (safe for stateless REST APIs with no sessions)
 //   - All endpoints are permitted without authentication (permitAll)
 //     so that the React frontend can call all APIs freely
-//   - CORS is configured to allow the React dev server (port 5174)
+//   - CORS is configured to allow the React dev server (port 5173/5174)
+//
+// BCrypt:
+//   - Passwords are hashed using BCryptPasswordEncoder during registration
+//   - BCrypt.matches() is used to verify during login
 //
 // Viva Tip:
 //   CORS (Cross-Origin Resource Sharing) is needed because the React
-//   frontend runs on a different port (5174) than Spring Boot (8080).
+//   frontend runs on a different port (5173) than Spring Boot (8080).
 //   Without this config, the browser would block API requests.
 // =============================================================
 
 @Configuration
 public class SecurityConfig {
+
+    // -------------------------
+    // BCrypt Password Encoder Bean
+    // -------------------------
+    // Provides BCrypt hashing throughout the application.
+    // Injected by @Autowired wherever password encoding is needed.
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     // -------------------------
     // HTTP Security Filter Chain
@@ -74,10 +91,8 @@ public class SecurityConfig {
         CorsConfiguration configuration =
                 new CorsConfiguration();
 
-        // Allow requests from the React dev server (Vite uses 5173 by default, 5174 if taken)
-        configuration.setAllowedOrigins(
-                List.of("http://localhost:5173", "http://localhost:5174")
-        );
+        // Allow requests from any origin — matches @CrossOrigin("*") on all controllers
+        configuration.addAllowedOriginPattern("*");
 
         // Allow the standard HTTP methods used by REST APIs
         configuration.setAllowedMethods(
@@ -88,9 +103,6 @@ public class SecurityConfig {
         configuration.setAllowedHeaders(
                 List.of("*")
         );
-
-        // Allow credentials (cookies, auth headers) in cross-origin requests
-        configuration.setAllowCredentials(true);
 
         // Apply this CORS configuration to all URL patterns ("/**")
         UrlBasedCorsConfigurationSource source =

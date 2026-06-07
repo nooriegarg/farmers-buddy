@@ -16,10 +16,6 @@ import java.util.List;
 //
 // Architecture Position:
 //   QueryController → QueryService → QueryRepository → MySQL
-//
-// Notifications:
-//   saveQuery (reply workflow) → notifies the specific farmer when
-//   their query status changes to RESOLVED.
 // =============================================================
 
 @Service
@@ -27,10 +23,6 @@ public class QueryService {
 
     @Autowired
     private QueryRepository queryRepository;
-
-    // Injected to auto-generate a notification when an officer replies
-    @Autowired
-    private NotificationService notificationService;
 
     // -------------------------
     // Create a New Query
@@ -43,17 +35,8 @@ public class QueryService {
     // -------------------------
     // Save / Update a Query
     // -------------------------
-    // Called by the officer reply flow. When the query becomes RESOLVED,
-    // a notification is automatically sent to the farmer who owns it.
     public Query saveQuery(Query query) {
-        Query saved = queryRepository.save(query);
-        if ("RESOLVED".equals(saved.getStatus()) && saved.getFarmerId() != null) {
-            notificationService.notifyUser(
-                saved.getFarmerId(),
-                "Your query \"" + saved.getTitle() + "\" has been answered by an officer."
-            );
-        }
-        return saved;
+        return queryRepository.save(query);
     }
 
     // -------------------------

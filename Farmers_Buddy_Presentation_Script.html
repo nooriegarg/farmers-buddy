@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    body {
+      font-family: Calibri, Arial, sans-serif;
+      font-size: 11pt;
+      line-height: 1.6;
+      margin: 2.5cm;
+      color: #000;
+    }
+
+    h1 {
+      font-size: 20pt;
+      font-weight: bold;
+      text-align: center;
+      color: #1a5c1a;
+      margin-bottom: 4pt;
+    }
+
+    h2 {
+      font-size: 13pt;
+      font-weight: bold;
+      text-align: center;
+      color: #333;
+      margin-top: 0;
+      margin-bottom: 20pt;
+    }
+
+    h3 {
+      font-size: 12pt;
+      font-weight: bold;
+      background-color: #1a5c1a;
+      color: #fff;
+      padding: 5pt 10pt;
+      margin-top: 18pt;
+      margin-bottom: 6pt;
+    }
+
+    .speaker-noorie {
+      font-weight: bold;
+      color: #1a5c1a;
+      font-size: 11pt;
+    }
+
+    .speaker-yash {
+      font-weight: bold;
+      color: #0d47a1;
+      font-size: 11pt;
+    }
+
+    .instruction {
+      font-style: italic;
+      color: #888;
+      font-size: 10pt;
+      margin: 4pt 0 4pt 20pt;
+    }
+
+    p {
+      margin: 6pt 0;
+    }
+
+    .dialog {
+      margin-left: 20pt;
+      margin-bottom: 8pt;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #ccc;
+      margin: 16pt 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10pt;
+      font-size: 10.5pt;
+    }
+
+    th {
+      background-color: #1a5c1a;
+      color: #fff;
+      padding: 6pt 10pt;
+      text-align: left;
+      font-weight: bold;
+    }
+
+    td {
+      padding: 5pt 10pt;
+      border: 1px solid #ccc;
+      vertical-align: top;
+    }
+
+    tr:nth-child(even) td {
+      background-color: #f4f9f4;
+    }
+
+    .time-note {
+      font-size: 10pt;
+      color: #555;
+      font-style: italic;
+    }
+
+    .section-time {
+      float: right;
+      font-size: 9.5pt;
+      font-weight: normal;
+      color: #aaa;
+      font-style: italic;
+    }
+
+    .total-time {
+      text-align: center;
+      font-weight: bold;
+      font-size: 11pt;
+      color: #1a5c1a;
+      margin-top: 16pt;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Farmers Buddy</h1>
+  <h2>10-Minute Presentation Script &nbsp;|&nbsp; Noorie &amp; Yash</h2>
+
+  <hr />
+
+  <!-- SECTION 1 -->
+  <h3>OPENING &nbsp;<span class="section-time">~1 min</span></h3>
+
+  <p class="speaker-noorie">Noorie:</p>
+  <div class="dialog">
+    <p>Hi everyone. I'm Noorie, and this is Yash. Together we've built a full-stack web application called <strong>Farmers Buddy</strong>.</p>
+    <p>So the idea came from a simple observation — farmers in India often don't have easy access to agricultural guidance, market prices, or government schemes. They either don't know where to look, or the platforms that exist are too complicated for them to use.</p>
+    <p>So we thought — what if we built something simple, role-based, and actually useful for the entire ecosystem? Not just for farmers, but for agriculture officers, domain experts, and admins too.</p>
+    <p>That's Farmers Buddy.</p>
+    <p class="instruction">[Pause briefly — let the intro land]</p>
+  </div>
+
+  <hr />
+
+  <!-- SECTION 2 -->
+  <h3>PROBLEM + SOLUTION &nbsp;<span class="section-time">~1 min</span></h3>
+
+  <p class="speaker-yash">Yash:</p>
+  <div class="dialog">
+    <p>To be more specific — the core problems we're solving are:</p>
+    <p>Farmers have no direct channel to ask questions and get answers from officers or experts. There's no centralized place to see mandi prices, upcoming training sessions, or awareness drives. And managing all of this from the admin side is scattered.</p>
+    <p>Our platform brings all of this together. Four roles — Farmer, Officer, Expert, and Admin — each with their own dashboard and tools. And everything is connected through one backend.</p>
+    <p class="instruction">[Open browser — show Home page]</p>
+    <p>This is the home page. Clean, role-aware. If you're not logged in, you see the public landing. Once you log in, the app knows your role and takes you to the right place.</p>
+  </div>
+
+  <hr />
+
+  <!-- SECTION 3 -->
+  <h3>TECH STACK &nbsp;<span class="section-time">~45 sec</span></h3>
+
+  <p class="speaker-noorie">Noorie:</p>
+  <div class="dialog">
+    <p>Quick overview of what we used to build this.</p>
+    <p class="instruction">[Open VS Code — briefly show folder structure]</p>
+    <p>The frontend is built with <strong>React</strong> — component-based, fast, clean UI using Tailwind CSS for styling. For routing we used React Router.</p>
+    <p>The backend is <strong>Spring Boot</strong> — Java-based REST API, running on port 8080. We connect to a <strong>MySQL</strong> database using Spring Data JPA, which means Hibernate manages the tables for us automatically.</p>
+    <p>The frontend runs on port 5173, talks to the backend via Axios — and we have a shared Axios instance that automatically attaches the user's role as a header on every request.</p>
+    <p>Simple, clean, production-style setup.</p>
+  </div>
+
+  <hr />
+
+  <!-- SECTION 4 -->
+  <h3>ARCHITECTURE &nbsp;<span class="section-time">~45 sec</span></h3>
+
+  <p class="speaker-yash">Yash:</p>
+  <div class="dialog">
+    <p>The architecture follows a clean three-layer pattern on the backend.</p>
+    <p class="instruction">[Show backend folder structure in VS Code — controller / service / repository folders]</p>
+    <p>Every feature has three files — a <strong>Controller</strong> that handles the HTTP request, a <strong>Service</strong> that has the business logic, and a <strong>Repository</strong> that talks to the database.</p>
+    <p>So for example — when a farmer submits a query, it goes:</p>
+    <p><code>QueryController → QueryService → QueryRepository → MySQL</code></p>
+    <p>And the response comes back the same way.</p>
+    <p>On the frontend, every feature has its own <strong>service file</strong> — so <code>trainingService.js</code>, <code>queryService.js</code>, and so on — which keeps the API calls separate from the UI components.</p>
+    <p>It's modular, easy to extend, and very easy to debug.</p>
+  </div>
+
+  <hr />
+
+  <!-- SECTION 5 -->
+  <h3>ROLE HIERARCHY + AUTH &nbsp;<span class="section-time">~1 min</span></h3>
+
+  <p class="speaker-noorie">Noorie:</p>
+  <div class="dialog">
+    <p>Let's talk about how users get into the system.</p>
+    <p class="instruction">[Open Register page]</p>
+    <p>We have four roles — Farmer, Officer, Expert, and Admin. When you register, you pick your role. Farmer is open to everyone. But if you want to register as an Officer, Expert, or Admin — you need a passkey. This is a basic access control so random users can't claim privileged roles.</p>
+    <p class="instruction">[Show the passkey modal briefly]</p>
+    <p>Now for security — passwords are hashed using <strong>BCrypt</strong> before they're stored. So the database never holds a plain-text password. During login, we use BCrypt's verify method to compare the input against the hash.</p>
+    <p class="instruction">[Switch to Login page]</p>
+    <p>We also built a transparent migration — any old accounts with plain-text passwords get automatically re-hashed on their next login. No data loss, no manual intervention.</p>
+    <p>After login, the user object — name, ID, role — is saved in localStorage. And React Router's ProtectedRoute component uses that to guard every page. If you try to access <code>/admin-dashboard</code> as a farmer, you get redirected.</p>
+  </div>
+
+  <hr />
+
+  <!-- SECTION 6 -->
+  <h3>DEMO — FARMER MODULE &nbsp;<span class="section-time">~1.5 min</span></h3>
+
+  <p class="speaker-yash">Yash:</p>
+  <div class="dialog">
+    <p>Let me show you the farmer experience.</p>
+    <p class="instruction">[Log in as Farmer — show Farmer Dashboard]</p>
+    <p>This is the farmer dashboard. At the top we have stats — total queries, enrollments. Below that, quick access buttons to every feature.</p>
+    <p class="instruction">[Click "My Queries" in sidebar]</p>
+    <p>This is where farmers submit their questions. Let me create one now.</p>
+    <p class="instruction">[Fill in a query title and description — submit it]</p>
+    <p>Done. The query is saved with status "PENDING" and shows up immediately in the list.</p>
+    <p class="instruction">[Click "Trainings" in sidebar]</p>
+    <p>Here farmers can see available training sessions. If they find one relevant, they hit Enroll.</p>
+    <p class="instruction">[Enroll in a training]</p>
+    <p>Status shows "ENROLLED" right away.</p>
+    <p class="instruction">[Click "Mandi Prices" in sidebar]</p>
+    <p>This shows current market rates for crops — published by the admin.</p>
+    <p class="instruction">[Click "Expert Guidance" in sidebar]</p>
+    <p>And here farmers can browse solutions posted by agriculture experts — organized by category like pest control, irrigation, fertilizers.</p>
+  </div>
+
+  <hr />
+
+  <!-- SECTION 7 -->
+  <h3>DEMO — OFFICER MODULE &nbsp;<span class="section-time">~1 min</span></h3>
+
+  <p class="speaker-noorie">Noorie:</p>
+  <div class="dialog">
+    <p>Now let me log in as an Officer.</p>
+    <p class="instruction">[Switch to Officer login]</p>
+    <p class="instruction">[Open Officer Dashboard]</p>
+    <p>Officers manage training sessions and respond to farmer queries.</p>
+    <p class="instruction">[Click "Trainings" in sidebar]</p>
+    <p class="instruction">[Create a new training — fill title, date, location — submit]</p>
+    <p>Training created instantly. Farmers can see this on their end.</p>
+    <p class="instruction">[Click "Farmer Queries" in sidebar]</p>
+    <p>Here the officer can see all pending queries.</p>
+    <p class="instruction">[Open the query Yash just submitted — type a reply — submit]</p>
+    <p>The query is now marked as Resolved. If the farmer goes back, they'll see the officer's reply right there on their query card.</p>
+  </div>
+
+  <hr />
+
+  <!-- SECTION 8 -->
+  <h3>DEMO — EXPERT MODULE &nbsp;<span class="section-time">~45 sec</span></h3>
+
+  <p class="speaker-yash">Yash:</p>
+  <div class="dialog">
+    <p>The Expert role is one we're quite proud of because it adds a whole separate layer to the platform.</p>
+    <p class="instruction">[Switch to Expert login]</p>
+    <p class="instruction">[Open Expert Dashboard]</p>
+    <p>Experts have their own panel — they can post farming solutions and upload tools.</p>
+    <p class="instruction">[Click "My Solutions" in sidebar]</p>
+    <p class="instruction">[Post a new solution — title, category, description — submit]</p>
+    <p>This goes live immediately. Farmers browsing the Expert Guidance section will see it.</p>
+    <p>Experts can also see farmer queries and reply to them independently.</p>
+    <p class="instruction">[Click "Farmer Queries" — show the pending query — type an expert reply — submit]</p>
+    <p>Now that query has both an officer reply and an expert reply. The farmer sees both clearly labeled.</p>
+  </div>
+
+  <hr />
+
+  <!-- SECTION 9 -->
+  <h3>DEMO — ADMIN MODULE &nbsp;<span class="section-time">~1 min</span></h3>
+
+  <p class="speaker-noorie">Noorie:</p>
+  <div class="dialog">
+    <p>Finally, Admin — the control center.</p>
+    <p class="instruction">[Switch to Admin login]</p>
+    <p class="instruction">[Open Admin Dashboard]</p>
+    <p>The admin can see platform-wide stats — total users, queries, tools, awareness drives — all loaded live from the database.</p>
+    <p class="instruction">[Click "Manage Users"]</p>
+    <p>Full user list. Admin can delete accounts if needed.</p>
+    <p class="instruction">[Click "Awareness Drives"]</p>
+    <p class="instruction">[Create a new awareness drive — fill in details — submit]</p>
+    <p>Published instantly. All roles can view this.</p>
+    <p class="instruction">[Click "Mandi Prices"]</p>
+    <p class="instruction">[Add a crop price entry]</p>
+    <p>Done. Farmers will see this updated price when they check their Mandi Prices page.</p>
+    <p>The admin also manages tools in the catalog and can view all expert solutions.</p>
+  </div>
+
+  <hr />
+
+  <!-- SECTION 10 -->
+  <h3>DATABASE &nbsp;<span class="section-time">~30 sec</span></h3>
+
+  <p class="speaker-yash">Yash:</p>
+  <div class="dialog">
+    <p>Let me quickly show the database.</p>
+    <p class="instruction">[Open MySQL Workbench or terminal — run SHOW TABLES]</p>
+    <p>We have clean, separate tables for every entity — users, queries, trainings, training_enrollments, tools, awareness_drives, expert_solutions, mandi_prices, forum_posts, and more.</p>
+    <p>We use <code>ddl-auto=update</code> in Spring Boot — so Hibernate creates and updates tables automatically when the app starts. No manual SQL scripts needed.</p>
+    <p class="instruction">[Show the queries table — SELECT * FROM queries — briefly]</p>
+    <p>Every query, every reply, every enrollment — all persisted correctly.</p>
+  </div>
+
+  <hr />
+
+  <!-- SECTION 11 -->
+  <h3>SECURITY + VALIDATIONS &nbsp;<span class="section-time">~30 sec</span></h3>
+
+  <p class="speaker-noorie">Noorie:</p>
+  <div class="dialog">
+    <p>On the security side — we've covered a few important things.</p>
+    <p>BCrypt for passwords — already covered.</p>
+    <p>For route protection — the frontend has a <code>ProtectedRoute</code> component that checks the user's role before rendering any page. Wrong role gets redirected to login.</p>
+    <p>On the backend, sensitive admin endpoints check an <code>X-User-Role</code> header — which our Axios interceptor attaches automatically on every request.</p>
+    <p>For input validation — email format is validated on registration, password requires at least 6 characters with uppercase, lowercase, and a digit. Duplicate email registration is blocked with a clear error message.</p>
+  </div>
+
+  <hr />
+
+  <!-- SECTION 12 -->
+  <h3>CLOSING &nbsp;<span class="section-time">~30 sec</span></h3>
+
+  <p class="speaker-yash">Yash:</p>
+  <div class="dialog">
+    <p>So to summarize — Farmers Buddy is a full-stack, role-based platform that connects farmers, officers, experts, and admins in one clean application. It's modular, easy to extend, and covers real workflows that matter.</p>
+  </div>
+
+  <p class="speaker-noorie">Noorie:</p>
+  <div class="dialog">
+    <p>We've built it with React, Spring Boot, and MySQL — following standard layered architecture throughout. Every module is independent, every role has its own space, and the whole thing is demo-ready and stable.</p>
+    <p>We're happy to take any questions.</p>
+    <p class="instruction">[Both smile — stand ready for Q&amp;A]</p>
+  </div>
+
+  <hr />
+
+  <!-- Q&A TABLE -->
+  <h3>QUICK Q&amp;A CHEAT SHEET</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Question</th>
+        <th>Short Answer</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Why Spring Boot?</td>
+        <td>Industry-standard Java framework, built-in REST support, easy JPA integration</td>
+      </tr>
+      <tr>
+        <td>Why React?</td>
+        <td>Component-based, fast, great for role-based UIs</td>
+      </tr>
+      <tr>
+        <td>How does BCrypt work?</td>
+        <td>It hashes the password with a salt — even same passwords give different hashes. <code>matches()</code> verifies without reversing the hash</td>
+      </tr>
+      <tr>
+        <td>Why Tailwind CSS?</td>
+        <td>Utility-first, fast to build with, no separate CSS files</td>
+      </tr>
+      <tr>
+        <td>How is route protection done?</td>
+        <td>ProtectedRoute component checks <code>user.role</code> from localStorage before rendering the page</td>
+      </tr>
+      <tr>
+        <td>What is JPA / Hibernate?</td>
+        <td>Hibernate maps Java classes to DB tables — <code>@Entity</code> becomes a table, fields become columns</td>
+      </tr>
+      <tr>
+        <td>Why localStorage and not JWT?</td>
+        <td>Simpler for a project scope — JWT adds stateless auth which is the next natural upgrade</td>
+      </tr>
+      <tr>
+        <td>What is CORS and why did you configure it?</td>
+        <td>Cross-Origin Resource Sharing — needed because frontend (5173) and backend (8080) are on different ports. Browser blocks cross-origin requests without explicit permission</td>
+      </tr>
+      <tr>
+        <td>What does <code>ddl-auto=update</code> do?</td>
+        <td>Hibernate auto-creates/updates tables on startup based on entity classes — no manual SQL needed</td>
+      </tr>
+      <tr>
+        <td>How does the query flow work?</td>
+        <td>Farmer submits → Officer/Expert replies via PUT endpoint → Status becomes RESOLVED → Both replies visible on the same card</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="total-time">Total estimated time: ~9.5 minutes</p>
+
+</body>
+</html>

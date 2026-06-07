@@ -5,14 +5,16 @@ import {
   FaTools,
   FaComments,
   FaUserCircle,
+  FaQuestionCircle,
 } from "react-icons/fa"
 
 const navItems = [
-  { label: "Dashboard",       icon: <FaTachometerAlt />, path: "/expert-dashboard" },
-  { label: "My Solutions",    icon: <FaLightbulb />,     path: "/expert/solutions" },
-  { label: "Upload Tools",    icon: <FaTools />,         path: "/expert/tools"     },
-  { label: "Community Forum", icon: <FaComments />,      path: "/expert/forum"     },
-  { label: "My Profile",      icon: <FaUserCircle />,    path: "/expert/profile"   },
+  { label: "Dashboard",       icon: <FaTachometerAlt />,  path: "/expert-dashboard" },
+  { label: "My Solutions",    icon: <FaLightbulb />,      path: "/expert/solutions" },
+  { label: "Farmer Queries",  icon: <FaQuestionCircle />, path: "/expert/queries"   },
+  { label: "Upload Tools",    icon: <FaTools />,          path: "/expert/tools"     },
+  { label: "Community Forum", icon: <FaComments />,       path: "/expert/forum"     },
+  { label: "My Profile",      icon: <FaUserCircle />,     path: "/expert/profile"   },
 ]
 
 function ExpertSidebar() {

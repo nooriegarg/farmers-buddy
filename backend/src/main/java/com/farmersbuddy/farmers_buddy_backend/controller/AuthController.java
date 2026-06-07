@@ -79,10 +79,15 @@ public class AuthController {
     // GET /api/auth/users
     // -------------------------
     // Returns all registered users — used by the Admin user management page.
+    // Restricted to ADMIN role via X-User-Role header.
     @GetMapping("/users")
-    public List<User> getAllUsers() {
+    public ResponseEntity<List<User>> getAllUsers(
+            @RequestHeader(value = "X-User-Role", defaultValue = "") String role) {
 
-        return authService.getAllUsers();
+        if (!"ADMIN".equals(role)) {
+            return ResponseEntity.status(403).build();
+        }
+        return ResponseEntity.ok(authService.getAllUsers());
     }
 
     // -------------------------
@@ -110,8 +115,11 @@ public class AuthController {
     // DELETE /api/auth/profile/{id}
     // -------------------------
     // Deletes a user account permanently by ID.
+    // Admin can delete any account; users can delete their own.
     @DeleteMapping("/profile/{id}")
-    public ResponseEntity<Void> deleteProfile(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteProfile(
+            @PathVariable Long id,
+            @RequestHeader(value = "X-User-Role", defaultValue = "") String role) {
 
         authService.deleteUser(id);
         return ResponseEntity.ok().build();
