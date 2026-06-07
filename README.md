@@ -196,8 +196,8 @@ http://localhost:8080/api
 
 | Name | Role |
 |------|------|
-| Noorie | Full Stack Developer |
-| Yash | Full Stack Developer |
+| Noorie Garg | Full Stack Developer |
+| Yash Kumar | Full Stack Developer |
 
 ---
 
